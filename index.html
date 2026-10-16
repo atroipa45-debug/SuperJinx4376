@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06080f">
+<title>پنل مدیریت | جینکس</title>
+<style>
+:root{--ac:#5b8cff;--ac2:#f6b44d;--ac3:#2dd4bf;--ok:#22c55e;--bad:#f43f5e;--warn:#f59e0b;--r:18px;--ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.56,.64,1)}
+[data-theme=dark]{--bg:#06080f;--bg2:#0b1020;--card:rgba(255,255,255,.035);--card2:rgba(255,255,255,.06);--line:rgba(255,255,255,.075);--line2:rgba(255,255,255,.14);--text:#eaf0fb;--muted:#8792a8;--inp:rgba(255,255,255,.035);--side:rgba(8,11,22,.72);--shadow:0 20px 60px rgba(0,0,0,.45)}
+[data-theme=light]{--bg:#eef2f8;--bg2:#ffffff;--card:rgba(255,255,255,.78);--card2:rgba(15,23,42,.035);--line:rgba(15,23,42,.08);--line2:rgba(15,23,42,.16);--text:#0f172a;--muted:#64748b;--inp:rgba(255,255,255,.9);--side:rgba(255,255,255,.75);--shadow:0 20px 50px rgba(15,23,42,.12)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:Vazirmatn,"IRANSansX",IRANSans,Tahoma,"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.85;overflow-x:hidden;min-height:100vh}
+::selection{background:rgba(91,140,255,.35)}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+a{color:var(--ac);text-decoration:none}
+svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+/* ---------- animated background ---------- */
+.bgfx{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.bgfx i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;animation:float 22s var(--ease) infinite alternate}
+.bgfx i:nth-child(1){width:46vw;height:46vw;background:#2f5bff;top:-18vw;right:-10vw}
+.bgfx i:nth-child(2){width:34vw;height:34vw;background:#f6b44d;bottom:-14vw;left:-8vw;opacity:.22;animation-duration:28s}
+.bgfx i:nth-child(3){width:28vw;height:28vw;background:#14b8a6;top:40%;left:35%;opacity:.16;animation-duration:34s}
+[data-theme=light] .bgfx i{opacity:.22}
+.bgfx:after{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--line2) 1px,transparent 1px);background-size:28px 28px;mask-image:radial-gradient(ellipse at 70% 0%,#000 10%,transparent 65%);-webkit-mask-image:radial-gradient(ellipse at 70% 0%,#000 10%,transparent 65%);opacity:.5}
+@keyframes float{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-6vw,5vw) scale(1.12)}100%{transform:translate(4vw,-3vw) scale(.94)}}
+/* ---------- brand ---------- */
+.logo{width:46px;height:46px;border-radius:14px;position:relative;display:grid;place-items:center;flex-shrink:0;isolation:isolate}
+.logo:before{content:"";position:absolute;inset:0;border-radius:inherit;background:conic-gradient(from var(--a,0deg),var(--ac),#a5c2ff,var(--ac2),var(--ac3),var(--ac));animation:spin 6s linear infinite;z-index:-2}
+.logo:after{content:"";position:absolute;inset:2px;border-radius:12px;background:var(--bg2);z-index:-1}
+.logo span{font-weight:900;font-size:19px;background:linear-gradient(135deg,#9fbcff,var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes spin{to{--a:360deg}}
+.bn{font-weight:800;font-size:14.5px;white-space:nowrap}
+.bn .en{background:linear-gradient(90deg,#9fbcff,var(--ac2),#9fbcff);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 5s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+.bn .sep{color:var(--muted);font-weight:400}
+/* ---------- layout ---------- */
+aside{position:fixed;top:12px;bottom:12px;right:12px;width:262px;background:var(--side);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);border:1px solid var(--line);border-radius:22px;padding:18px 12px 12px;display:flex;flex-direction:column;z-index:40;transition:transform .45s var(--ease)}
+.brand{display:flex;align-items:center;gap:12px;padding:2px 8px 16px;border-bottom:1px solid var(--line)}
+.brand small{display:block;color:var(--muted);font-size:11px;line-height:1.4}
+nav{flex:1;overflow-y:auto;margin-top:8px;position:relative;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav .sec{font-size:10.5px;color:var(--muted);padding:14px 14px 4px;letter-spacing:.3px;opacity:.75}
+nav a{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:12px;color:var(--muted);cursor:pointer;margin:1px 0;font-size:13.4px;position:relative;z-index:1;transition:color .25s}
+nav a:hover{color:var(--text)}
+nav a.on{color:var(--text);font-weight:700}
+nav a.on svg{color:var(--ac)}
+nav .ind{position:absolute;top:0;right:0;left:0;height:40px;border-radius:12px;background:linear-gradient(270deg,rgba(91,140,255,.2),rgba(91,140,255,.04));border:1px solid rgba(91,140,255,.22);transition:transform .45s var(--spring),height .3s;z-index:0;pointer-events:none}
+nav .ind:before{content:"";position:absolute;right:-1px;top:10px;bottom:10px;width:3px;border-radius:3px;background:var(--ac);box-shadow:0 0 12px var(--ac)}
+nav a .bdg{margin-right:auto;background:var(--bad);color:#fff;font-size:10.5px;min-width:20px;text-align:center;padding:0 6px;border-radius:20px;line-height:19px;font-weight:700;animation:pop .5s var(--spring)}
+.side-foot{border-top:1px solid var(--line);padding:12px 6px 2px;font-size:11px;color:var(--muted);text-align:center;line-height:1.7}
+.side-foot a{color:var(--text)}
+main{margin-right:286px;padding:16px 26px 30px 26px;min-height:100vh;display:flex;flex-direction:column}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;position:sticky;top:0;z-index:30;padding:10px 0}
+header.top:before{content:"";position:absolute;inset:0 -26px;background:linear-gradient(var(--bg) 40%,transparent);z-index:-1;opacity:.92}
+header h1{font-size:21px;font-weight:800;line-height:1.4}
+header .sub{color:var(--muted);font-size:12.5px}
+.hr{display:flex;gap:8px;align-items:center}
+.pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);padding:7px 14px;border-radius:30px;font-size:12px;white-space:nowrap;backdrop-filter:blur(10px)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--bad);flex-shrink:0}
+.dot.on{background:var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.ib{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);display:grid;place-items:center;cursor:pointer;transition:.25s var(--ease);backdrop-filter:blur(10px)}
+.ib:hover{border-color:var(--ac);transform:translateY(-2px);box-shadow:0 8px 20px rgba(91,140,255,.18)}
+.kbd{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:0 6px;font-family:monospace}
+.menu-btn{display:none}
+#view{flex:1;position:relative}
+footer.cr{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:12px}
+footer.cr a{color:var(--text);font-weight:700}
+/* ---------- components ---------- */
+.grid{display:grid;gap:16px}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g21{grid-template-columns:minmax(0,1.65fr) minmax(0,1fr)}.g12{grid-template-columns:minmax(0,1fr) minmax(0,1.65fr)}
+.mt{margin-top:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0;position:relative;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:border-color .3s,transform .4s var(--ease),box-shadow .4s}
+.card:before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:radial-gradient(400px circle at var(--mx,50%) var(--my,50%),rgba(91,140,255,.55),transparent 45%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .4s;pointer-events:none}
+.card:hover:before{opacity:1}
+[data-theme=light] .card{box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.card h3{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card h3 small{font-weight:400;color:var(--muted);font-size:12px}
+.muted{color:var(--muted);font-size:12.5px}
+.stat{overflow:hidden;cursor:default}
+.stat:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.stat .top{display:flex;justify-content:space-between;align-items:flex-start}
+.stat .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;position:relative}
+.stat .ic:after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 28px currentColor;opacity:.25}
+.stat small{color:var(--muted);font-size:12.5px;display:block;margin-top:14px}
+.stat b{display:block;font-size:24px;font-weight:900;margin-top:2px;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+.stat .tr{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+.tr.up{color:var(--ok);background:rgba(34,197,94,.12)}.tr.dn{color:var(--bad);background:rgba(244,63,94,.12)}
+.stat{padding-bottom:64px}.stat svg.spark{position:absolute;left:0;bottom:0;width:100%;height:48px;opacity:.85;pointer-events:none}
+label.l{display:block;font-size:12.5px;color:var(--muted);margin:12px 0 6px}
+input,select,textarea{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;font-family:inherit;font-size:13.5px;background:var(--inp);color:var(--text);transition:border-color .2s,box-shadow .2s,background .2s}
+select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:16px 52%,21px 52%;background-size:5px 5px;background-repeat:no-repeat;padding-left:34px}
+select option{background:var(--bg2);color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 4px rgba(91,140,255,.14)}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.7}
+.ltr{direction:ltr;text-align:left}
+textarea{resize:vertical;min-height:100px;line-height:1.9}
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:12px;border:1px solid transparent;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;background:linear-gradient(135deg,#6b98ff,#3f6fff);color:#fff;transition:transform .25s var(--ease),box-shadow .25s,filter .2s;white-space:nowrap;box-shadow:0 6px 18px rgba(63,111,255,.28)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(63,111,255,.38)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn[disabled]{opacity:.55;pointer-events:none}
+.btn.o{background:var(--card2);color:var(--text);border-color:var(--line);box-shadow:none}
+.btn.o:hover{border-color:var(--line2)}
+.btn.ok{background:linear-gradient(135deg,#34d36f,#16a34a);box-shadow:0 6px 18px rgba(34,197,94,.25)}
+.btn.bad{background:linear-gradient(135deg,#fb7185,#e11d48);box-shadow:0 6px 18px rgba(244,63,94,.25)}
+.btn.gold{background:linear-gradient(135deg,#ffd27f,#f59e0b);color:#231703;box-shadow:0 6px 18px rgba(245,158,11,.3)}
+.btn.sm{padding:6px 12px;font-size:12px;border-radius:10px}
+.btn.lg{padding:13px 24px;font-size:14px;border-radius:14px}
+.btn.ghost{background:none;box-shadow:none;color:var(--muted);padding:6px 8px}
+.btn.ghost:hover{color:var(--text)}
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);animation:rip .6s linear;pointer-events:none}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:sp .7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}.row>*{flex:1;min-width:150px}.row>.f0{flex:0 0 auto;min-width:0}
+.tw{overflow-x:auto;margin:0 -8px;padding:0 8px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;min-width:620px}
+th{text-align:right;color:var(--muted);font-weight:500;padding:10px 12px;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);white-space:nowrap;transition:background .2s}
+tr:last-child td{border:none}
+tbody tr{animation:rise .5s var(--ease) both}
+tbody tr:hover td{background:var(--card2)}
+tbody tr.click{cursor:pointer}
+.tag{padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px}
+.tag:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.tag.ok{background:rgba(34,197,94,.12);color:var(--ok)}.tag.w{background:rgba(245,158,11,.13);color:var(--warn)}.tag.bad{background:rgba(244,63,94,.12);color:var(--bad)}.tag.b{background:rgba(91,140,255,.13);color:var(--ac)}.tag.g{background:rgba(246,180,77,.13);color:var(--ac2)}.tag.n{background:var(--card2);color:var(--muted)}
+.li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border:none}
+.li .t b{display:block;font-size:13.5px}.li .t small{color:var(--muted);font-size:12px}
+.sw{position:relative;width:46px;height:26px;flex-shrink:0;display:inline-block}
+.sw input{display:none}
+.sw span{position:absolute;inset:0;background:var(--line2);border-radius:30px;cursor:pointer;transition:background .3s}
+.sw span:before{content:"";position:absolute;width:20px;height:20px;right:3px;top:3px;background:#fff;border-radius:50%;transition:transform .45s var(--spring),width .2s;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.sw span:active:before{width:25px}
+.sw input:checked+span{background:linear-gradient(135deg,#34d36f,#16a34a)}
+.sw input:checked+span:before{transform:translateX(-20px)}
+.tabs{display:inline-flex;gap:4px;background:var(--card);border:1px solid var(--line);padding:4px;border-radius:14px;overflow-x:auto;max-width:100%;position:relative;scrollbar-width:none}
+.tabs a{padding:7px 14px;border-radius:10px;color:var(--muted);cursor:pointer;font-size:12.5px;white-space:nowrap;transition:.25s;position:relative}
+.tabs a:hover{color:var(--text)}
+.tabs a.on{background:linear-gradient(135deg,#6b98ff,#3f6fff);color:#fff;font-weight:700;box-shadow:0 4px 14px rgba(63,111,255,.3)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px;font-size:13px}
+.empty svg{width:42px;height:42px;opacity:.35;margin-bottom:8px;stroke-width:1.3}
+.prog{height:8px;border-radius:10px;background:var(--card2);overflow:hidden;border:1px solid var(--line)}
+.prog i{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,var(--ac),#9fbcff);transform-origin:right;animation:grow 1.2s var(--ease) both}
+.prog i.h{background:linear-gradient(90deg,var(--warn),#fbbf24)}.prog i.x{background:linear-gradient(90deg,var(--bad),#fb7185)}
+@keyframes grow{from{transform:scaleX(0)}}
+.kpi{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px}
+.mono{font-family:ui-monospace,Consolas,monospace;direction:ltr;unicode-bidi:embed;font-size:12.5px}
+.av{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff;flex-shrink:0;font-size:14px}
+.user-cell{display:flex;align-items:center;gap:10px}
+.user-cell small{display:block;color:var(--muted);font-size:11.5px;line-height:1.3}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.toolbar .search{position:relative;flex:1;min-width:200px;max-width:380px}
+.toolbar .search svg{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.toolbar .search input{padding-right:40px}
+.sk{border-radius:12px;background:linear-gradient(90deg,var(--card2) 25%,var(--line2) 50%,var(--card2) 75%);background-size:400% 100%;animation:sk 1.4s ease infinite}
+@keyframes sk{from{background-position:100% 0}to{background-position:-100% 0}}
+.hint{background:rgba(91,140,255,.07);border:1px solid rgba(91,140,255,.2);border-radius:14px;padding:12px 14px;font-size:12.5px;color:var(--muted);margin-top:14px;line-height:1.95}
+.hint b{color:var(--text)}
+.det{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:12px;font-size:13px;display:flex;gap:10px;align-items:center;line-height:1.8}
+.det.wait{color:var(--muted)}.det.ok{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.07)}.det.no{border-color:rgba(244,63,94,.35);background:rgba(244,63,94,.07)}
+.det .dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;background:var(--muted)}.det.ok .dot{background:#22c55e}.det.no .dot{background:#f43f5e}.det.wait .dot{animation:pl 1s infinite}
+@keyframes pl{50%{opacity:.25}}
+.adv{margin-top:12px}.adv>summary{cursor:pointer;font-size:12.5px;color:var(--muted);list-style:none;padding:6px 0}.adv>summary::-webkit-details-marker{display:none}.adv[open]>summary{color:var(--text)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:6px 13px;border-radius:30px;border:1px solid var(--line);background:var(--card);font-size:12px;cursor:pointer;color:var(--muted);transition:.2s}
+.chip.on{border-color:var(--ac);color:var(--ac);background:rgba(91,140,255,.1)}
+/* stagger animation */
+.page>*{animation:rise .6s var(--ease) both;animation-delay:calc(var(--i,0)*70ms)}
+.page .grid>*{animation:rise .6s var(--ease) both;animation-delay:calc(var(--i,0)*70ms + 60ms)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes pop{from{transform:scale(.5);opacity:0}}
+/* chart */
+.chart-wrap{position:relative}
+.chart-wrap svg{width:100%;height:260px;display:block;overflow:visible}
+.chart-wrap .ln{stroke-dasharray:3000;stroke-dashoffset:3000;animation:draw 1.8s var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.chart-wrap .ar{opacity:0;animation:fade 1.2s .5s var(--ease) forwards}
+@keyframes fade{to{opacity:1}}
+.tip{position:absolute;pointer-events:none;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:8px 12px;font-size:12px;box-shadow:var(--shadow);opacity:0;transition:opacity .2s,transform .15s;white-space:nowrap;z-index:5;transform:translate(-50%,-110%)}
+.tip b{display:block;font-size:13px}
+.donut circle{transition:stroke-dasharray 1.4s var(--ease)}
+.legend{display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+.legend span{display:flex;align-items:center;gap:8px}
+.legend i{width:10px;height:10px;border-radius:3px}
+/* telegram preview */
+.phone{max-width:330px;margin:auto;background:#0e1621;border-radius:36px;padding:12px 10px;border:8px solid #1a1e26;box-shadow:0 30px 70px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.05);direction:rtl;position:relative}
+.phone:before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:90px;height:20px;background:#1a1e26;border-radius:20px}
+.tgh{display:flex;align-items:center;gap:10px;color:#fff;font-size:13px;padding:22px 8px 10px;border-bottom:1px solid #1c2733}
+.tgh .ava{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#5b8def,#2b4fa8);display:grid;place-items:center;font-weight:800}
+.tgh small{display:block;color:#6d8399;font-size:11px;line-height:1.3}
+.tgb{padding:12px 4px 4px;min-height:280px;background:#0e1621 radial-gradient(circle at 30% 20%,rgba(91,140,255,.06),transparent 60%)}
+.msg{background:#182533;color:#e9eef3;border-radius:16px 16px 4px 16px;padding:10px 12px;font-size:12.5px;white-space:pre-line;line-height:1.8;margin-bottom:6px;animation:rise .4s var(--ease)}
+.msg blockquote{border-right:3px solid #5b8def;background:rgba(91,141,239,.1);padding:4px 8px;border-radius:6px;margin:4px 0}
+.msg code{font-family:monospace;color:#7fb6ff;direction:ltr;unicode-bidi:embed}
+.kb{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.kb div{text-align:center;padding:9px 6px;border-radius:10px;font-size:11.5px;color:#fff;font-weight:600;background:rgba(43,82,120,.75);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;animation:pop .35s var(--spring) both;transition:background .3s}
+.kb div.w{grid-column:span 2}
+.st-{background:rgba(43,82,120,.75)}.st-primary{background:#3390ec!important}.st-success{background:#2fa94e!important}.st-danger{background:#e5484d!important}
+/* button designer */
+.be{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:var(--card2);flex-wrap:wrap;transition:transform .3s var(--ease),opacity .3s,border-color .2s}
+.be.drag{opacity:.4;transform:scale(.98)}
+.be.over{border-color:var(--ac)}
+.be .hd{cursor:grab;color:var(--muted);display:grid;place-items:center}
+.be input[type=text]{flex:1;min-width:140px;padding:8px 12px}
+.colors{display:flex;gap:5px}
+.colors i{width:24px;height:24px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:transform .3s var(--spring)}
+.colors i:hover{transform:scale(1.15)}
+.colors i.on{border-color:var(--text);transform:scale(1.1)}
+.wbtn{font-size:11.5px;padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:var(--inp);color:var(--muted);cursor:pointer;font-family:inherit}
+.wbtn.on{color:var(--ac);border-color:var(--ac)}
+/* receipts / cards */
+.rc{border:1px solid var(--line);border-radius:16px;padding:12px;background:var(--card2);transition:transform .4s var(--ease)}
+.rc:hover{transform:translateY(-4px)}
+.rimg{height:170px;border-radius:12px;margin-bottom:10px;background:var(--card);display:grid;place-items:center;color:var(--muted);font-size:12px;overflow:hidden;cursor:zoom-in}
+.rimg img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+.rc:hover .rimg img{transform:scale(1.05)}
+.bank{border-radius:20px;padding:20px;color:#fff;position:relative;overflow:hidden;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#1d3366,#0a1124 60%);box-shadow:0 20px 40px rgba(0,0,0,.3);transition:transform .5s var(--ease)}
+.bank:hover{transform:translateY(-6px) rotateX(4deg)}
+.bank:before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;left:-80px;top:-110px;background:radial-gradient(rgba(246,180,77,.4),transparent 70%)}
+.bank:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.12) 45%,transparent 60%);transform:translateX(-100%);transition:transform 1s}
+.bank:hover:after{transform:translateX(100%)}
+.bank>*{position:relative;z-index:1}
+.bank .n{direction:ltr;text-align:left;font-size:19px;letter-spacing:3px;font-family:ui-monospace,Consolas,monospace}
+.bank .chipx{width:40px;height:30px;border-radius:7px;background:linear-gradient(135deg,#f6d17a,#b88a2d)}
+.bank.off{filter:grayscale(.9) brightness(.7)}
+.srv{position:relative;overflow:hidden}
+.srv .type{font-size:11px;color:var(--muted)}
+.ring{width:64px;height:64px;flex-shrink:0}
+/* chat */
+.chat{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow-y:auto;padding:4px}
+.bub{max-width:80%;padding:10px 14px;border-radius:16px;border:1px solid var(--line);animation:rise .4s var(--ease) both;white-space:pre-wrap;word-break:break-word}
+.bub.u{align-self:flex-start;background:var(--card2);border-bottom-right-radius:4px}
+.bub.a{align-self:flex-end;background:rgba(91,140,255,.16);border-color:rgba(91,140,255,.25);border-bottom-left-radius:4px}
+.bub small{display:block;color:var(--muted);font-size:10.5px;margin-top:4px}
+.tk{padding:12px;border-radius:14px;cursor:pointer;border:1px solid transparent;transition:.2s;margin-bottom:4px}
+.tk:hover{background:var(--card2)}.tk.on{background:rgba(91,140,255,.1);border-color:rgba(91,140,255,.25)}
+/* overlays */
+.ov{position:fixed;inset:0;background:rgba(2,4,10,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:80;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .3s}
+.ov.on{opacity:1;pointer-events:auto}
+.mdl{background:var(--bg2);border:1px solid var(--line2);border-radius:24px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;transform:scale(.92) translateY(20px);transition:transform .5s var(--spring);box-shadow:var(--shadow)}
+.mdl.wide{max-width:760px}
+.ov.on .mdl{transform:none}
+.mdl h3{font-size:17px;margin-bottom:6px;font-weight:800}
+.mdl .act{display:flex;gap:8px;margin-top:22px}
+.full{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:18px;overflow-y:auto}
+.full.on{display:flex}
+body.auth aside,body.auth main,body.auth .sbo{display:none!important}
+.authbar{position:fixed;top:14px;left:14px;z-index:95;display:none;gap:8px}.authbar .ib{background:var(--bg2);border-color:var(--line2);box-shadow:var(--shadow)}body.auth .authbar{display:flex}
+.tkbox{display:flex;gap:6px;align-items:center}
+.page.still>*,.page.still .grid>*,.page.still tbody tr{animation:none!important}
+@media(max-width:860px){aside,.ov,.wz,.sbo{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}aside{background:var(--bg2)}.ov{background:rgba(2,4,10,.72)}}
+@media(max-width:860px){input,select,textarea{font-size:16px!important}}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}button,a,.btn,.ib,input,select,textarea,label{touch-action:manipulation}
+.pwbox{position:relative}.pwbox input{padding-left:46px}.pwbox .eye{position:absolute;left:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;border-radius:10px}
+.lerr{min-height:22px;margin-top:8px;font-size:12.5px;color:var(--bad);text-align:center;transition:opacity .2s}
+.shake{animation:shake .4s}@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}.tkbox input{flex:1;min-width:0}
+.wz{width:100%;max-width:560px;background:var(--card);border:1px solid var(--line2);border-radius:28px;padding:32px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:var(--shadow);animation:rise .8s var(--ease)}
+.wz .head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.steps{display:flex;gap:8px;margin-bottom:26px}
+.steps div{flex:1;text-align:center;font-size:11px;color:var(--muted)}
+.steps div i{display:block;height:5px;border-radius:5px;background:var(--line2);margin-bottom:6px;overflow:hidden;position:relative}
+.steps div i:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ac),#9fbcff);transform:scaleX(0);transform-origin:right;transition:transform .7s var(--ease)}
+.steps div.on i:after{transform:scaleX(1)}
+.steps div.on{color:var(--text)}
+.wz h2{font-size:20px;margin-bottom:4px;font-weight:800}
+.wstep{animation:slide .5s var(--ease)}
+@keyframes slide{from{opacity:0;transform:translateX(-30px)}}
+.big-logo{width:76px;height:76px;border-radius:24px;margin:0 auto 18px}
+.big-logo:after{border-radius:22px}
+.big-logo span{font-size:30px}
+.toasts{position:fixed;bottom:20px;left:20px;z-index:100;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--bg2);color:var(--text);border:1px solid var(--line2);padding:12px 16px;border-radius:14px;font-size:13px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);animation:tin .5s var(--spring);position:relative;overflow:hidden;min-width:240px;max-width:380px}
+.toast.out{animation:tout .35s var(--ease) forwards}
+.toast i.d{width:9px;height:9px;border-radius:50%;background:var(--ok);flex-shrink:0;box-shadow:0 0 10px var(--ok)}
+.toast.e i.d{background:var(--bad);box-shadow:0 0 10px var(--bad)}
+.toast:after{content:"";position:absolute;bottom:0;right:0;height:2px;width:100%;background:var(--ac);animation:tbar 3.2s linear forwards;transform-origin:right}
+@keyframes tin{from{transform:translateX(-120%);opacity:0}}
+@keyframes tout{to{transform:translateX(-120%);opacity:0}}
+@keyframes tbar{to{transform:scaleX(0)}}
+.cmd input{font-size:15px;padding:14px 16px}
+.cmd .res a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;color:var(--text);cursor:pointer}
+.cmd .res a.on,.cmd .res a:hover{background:rgba(91,140,255,.12)}
+.sbo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:35;opacity:0;pointer-events:none;transition:opacity .3s}
+.sbo.on{opacity:1;pointer-events:auto}
+.lbox{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
+.lbox.on{display:flex}.lbox img{max-width:100%;max-height:100%;border-radius:12px;animation:pop .4s var(--spring)}
+@media(max-width:1250px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g21,.g12{grid-template-columns:1fr}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:860px){aside{transform:translateX(calc(100% + 20px))}aside.open{transform:none}main{margin-right:0;padding:8px 14px 24px}.menu-btn{display:grid}.g2,.g3,.g4{grid-template-columns:1fr}header h1{font-size:17px}header .sub,.pill .t,.hide-m{display:none}.wz{padding:22px;border-radius:22px}header.top:before{inset:0 -14px}.toasts{left:10px;right:10px}.toast{max-width:none}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+.card,.pill,.ib,.tabs{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}[data-theme=dark] .card{background:rgba(13,18,33,.86)}.bgfx i{animation:none!important;filter:blur(70px)}.logo:before,.bn .en{animation:none!important}</style>
+</head>
+<body>
+<noscript><div style="position:fixed;inset:0;z-index:999;background:#06080f;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:16px;line-height:2">این صفحه در این برنامه اجرا نمی‌شود.<br>فایل را دانلود کنید و با مرورگر Chrome باز کنید.</div></noscript><div class="bgfx"><i></i><i></i><i></i></div>
+
+<div class="authbar"><button class="ib" id="thb2" title="تغییر تم"><svg class="i" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button></div>
+<div class="full" id="wiz"><div class="wz">
+ <div class="head"><div class="logo"><span>J</span></div><div><div class="bn">جینکس <span class="sep">|</span> <span class="en">𝙎𝙪𝙥𝙚𝙧 𝗝𝗶𝗻𝗫</span></div><div class="muted">راه‌اندازی اولیه ربات و پنل مدیریت</div></div></div>
+ <div class="steps" id="wsteps"><div><i></i>توکن ربات</div><div><i></i>ادمین</div><div><i></i>لینک و رمز</div></div>
+ <div id="wzb"></div>
+</div></div>
+
+<div class="full" id="login"><div class="wz" style="max-width:420px;text-align:center">
+ <div class="logo big-logo"><span>J</span></div>
+ <h2 class="bn" style="font-size:19px">جینکس <span class="sep">|</span> <span class="en">𝙎𝙪𝙥𝙚𝙧 𝗝𝗶𝗻𝗫</span></h2>
+ <p class="muted" style="margin:4px 0 20px">برای ورود به پنل مدیریت، رمز عبور را وارد کنید</p>
+ <form id="lform" autocomplete="on" onsubmit="return false"><input type="text" name="username" value="admin" autocomplete="username" hidden>
+ <div class="pwbox"><input id="lp" name="password" type="password" class="ltr" placeholder="Password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"><button type="button" class="eye" id="leye" aria-label="نمایش رمز"><svg class="i" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+ <div class="lerr" id="lerr"></div>
+ <button type="submit" class="btn lg" id="lbtn" style="width:100%;margin-top:6px">ورود به پنل</button></form>
+</div></div>
+
+<div class="sbo" id="sbo"></div>
+<aside id="sb">
+ <div class="brand"><div class="logo"><span>J</span></div><div><div class="bn">جینکس <span class="sep">|</span> <span class="en">𝙎𝙪𝙥𝙚𝙧 𝗝𝗶𝗻𝗫</span></div><small>پنل مدیریت ربات فروش</small></div></div>
+ <nav id="nav"></nav>
+ <div class="side-foot">طراحی و توسعه توسط<br><a class="brandlink" target="_blank" rel="noopener">جینکس | 𝙎𝙪𝙥𝙚𝙧 𝗝𝗶𝗻𝗫</a></div>
+</aside>
+
+<main>
+ <header class="top">
+  <div style="display:flex;align-items:center;gap:10px">
+   <button class="ib menu-btn" id="mb"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
+   <div><h1 id="ttl"></h1><div class="sub" id="sub"></div></div>
+  </div>
+  <div class="hr">
+   <button class="ib hide-m" id="cmdb" title="جستجوی سریع (Ctrl+K)"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
+   <div class="pill"><span class="dot" id="dot"></span><span class="t" id="st">در حال بررسی...</span></div>
+   <button class="ib" id="thb" title="تغییر تم"><svg class="i" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button>
+   <button class="ib" id="lob" title="خروج"><svg class="i" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+  </div>
+ </header>
+ <div id="view"></div>
+ <footer class="cr"><span>تمامی حقوق این پنل متعلق به <a class="brandlink" target="_blank" rel="noopener">جینکس | 𝙎𝙪𝙥𝙚𝙧 𝗝𝗶𝗻𝗫</a> است.</span><span>نسخه ۳.۰</span></footer>
+</main>
+
+<div class="ov" id="ov"><div class="mdl" id="mdl"></div></div>
+<div class="lbox" id="lbox"><img id="lbimg" alt=""></div>
+<div class="toasts" id="toasts"></div>
+<script>
+"use strict";
+const STORE = (() => { const mem = {}; let ls = null; try { ls = window.localStorage; ls.setItem("__t", "1"); ls.removeItem("__t"); } catch (e) { ls = null; }
+ return {getItem: k => { try { return ls ? ls.getItem(k) : (mem[k] ?? null); } catch (e) { return mem[k] ?? null; } }, setItem: (k, v) => { mem[k] = String(v); try { ls && ls.setItem(k, v); } catch (e) {} }, removeItem: k => { delete mem[k]; try { ls && ls.removeItem(k); } catch (e) {} }}; })();
+function safeHist(a, b, url) { try { history.replaceState(a, b, url); } catch (e) { /* file:// or sandboxed frame */ } }
+function copyText(t) { const ok = () => toast("کپی شد"); try { if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t).then(ok, () => fallbackCopy(t)); } catch (e) {} fallbackCopy(t); }
+function fallbackCopy(t) { const a = document.createElement("textarea"); a.value = t; a.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); toast("کپی شد"); } catch (e) { toast("کپی ناموفق بود", 1); } a.remove(); }
+// internal glitches (an element that was already replaced, a cancelled request) are logged, never shown as scary popups
+const QUIET = /null|undefined|reading|setting|is not a function|aborted|ابتدا وارد شوید/i;
+window.addEventListener("error", e => { try { const m = e.message || ""; if (QUIET.test(m)) return console.warn(m); toast("خطا: " + (m || "نامشخص"), 1); } catch (x) {} });
+window.addEventListener("unhandledrejection", e => { try { const m = (e.reason && e.reason.message) || ""; if (!m || QUIET.test(m)) return console.warn(m); toast("خطا: " + m, 1); } catch (x) {} });
+const ORIGIN = /^https?:/.test(location.origin || "") ? location.origin : "https://your-app.up.railway.app";
+/* ============ brand ============ */
+const BRAND_CHANNEL_DEFAULT = "https://t.me/";
+
+/* ============ utils ============ */
+const $ = id => document.getElementById(id);
+const qs = (s, el = document) => el.querySelector(s);
+const qsa = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fa = n => String(n ?? "").replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+const sep = n => fa(Math.round(Number(n) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "٬"));
+const money = n => sep(n) + " تومان";
+const short = n => { n = Number(n) || 0; if (n >= 1e9) return fa((n / 1e9).toFixed(1)) + " میلیارد"; if (n >= 1e6) return fa((n / 1e6).toFixed(1)) + " میلیون"; if (n >= 1e3) return fa(Math.round(n / 1e3)) + " هزار"; return fa(n); };
+const jd = ts => { if (!ts) return "نامحدود"; try { return new Date(ts * 1000).toLocaleDateString("fa-IR", {year: "numeric", month: "2-digit", day: "2-digit"}); } catch (e) { return fa(new Date(ts * 1000).toISOString().slice(0, 10)); } };
+const jdt = ts => { if (!ts) return "-"; try { return new Date(ts * 1000).toLocaleString("fa-IR", {month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"}); } catch (e) { return fa(new Date(ts * 1000).toISOString().slice(0, 16).replace("T", " ")); } };
+const ago = ts => { const s = Math.floor(Date.now() / 1000 - ts); if (s < 60) return "لحظاتی پیش"; if (s < 3600) return fa(Math.floor(s / 60)) + " دقیقه پیش"; if (s < 86400) return fa(Math.floor(s / 3600)) + " ساعت پیش"; return fa(Math.floor(s / 86400)) + " روز پیش"; };
+const gbt = v => !Number(v) ? "نامحدود" : fa(+v) + " گیگ";
+const bytes = b => fa(((b || 0) / 1073741824).toFixed(2)) + " گیگ";
+const COLORS = ["#5b8cff", "#f6b44d", "#2dd4bf", "#f472b6", "#a78bfa", "#fb923c", "#34d399"];
+const avc = id => COLORS[Math.abs(parseInt(String(id).slice(-3)) || 0) % COLORS.length];
+const av = (name, id) => `<div class="av" style="background:linear-gradient(135deg,${avc(id)},${avc((+String(id).slice(-3) || 0) + 2)})">${esc((name || "?").trim()[0] || "?")}</div>`;
+const debounce = (fn, ms = 300) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+
+const IC = {
+ dash:'<rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/>',
+ orders:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h3"/>',
+ users:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 4a4 4 0 010 8M22 21c0-3-2-5-4-6"/>',
+ services:'<path d="M12 2l9 5-9 5-9-5z"/><path d="M3 12l9 5 9-5M3 17l9 5 9-5"/>',
+ tickets:'<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 9h8M8 13h5"/>',
+ plans:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 14h3"/>',
+ servers:'<rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01"/>',
+ pay:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20M6 15h4"/>',
+ disc:'<path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+ resellers:'<path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/>',
+ buttons:'<rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="8" height="6" rx="2"/><rect x="13" y="14" width="8" height="6" rx="2"/>',
+ texts:'<path d="M4 6h16M4 12h10M4 18h7"/><path d="M17 15l3 3-3 3"/>',
+ bc:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',
+ bot:'<rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M9 13h.01M15 13h.01M9 17h6"/>',
+ admins:'<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/>',
+ settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+ logs:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+ money:'<path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>', trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>', edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+ check:'<path d="M5 12l5 5L20 7"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>', copy:'<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2h3"/>',
+ grip:'<circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/>',
+ refresh:'<path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5"/>', bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>', wallet:'<path d="M3 7a2 2 0 012-2h13v4M3 7v10a2 2 0 002 2h15V9H5a2 2 0 01-2-2z"/><circle cx="16" cy="14" r="1"/>',
+ inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 01-2 2H4a2 2 0 01-2-2v-6z"/>', download:'<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>', link:'<path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/>'
+};
+const ic = (k, st = "") => `<svg class="i" viewBox="0 0 24 24" style="${st}">${IC[k] || ""}</svg>`;
+const empty = (t, k = "inbox") => `<div class="empty">${ic(k)}<div>${t}</div></div>`;
+const sw = (on, attrs) => `<label class="sw"><input type="checkbox" ${on ? "checked" : ""} ${attrs}><span></span></label>`;
+
+/* ============ api ============ */
+let TOKEN = STORE.getItem("jx_t") || "", started = false;
+async function api(path, opt = {}) {
+ const sent = TOKEN, method = opt.method || (opt.body !== undefined ? "POST" : "GET");
+ let r;
+ for (let i = 0; ; i++) {
+  try {
+   r = await (window.DEMO_FETCH || window.fetch)("/api" + path, {method, headers: {"Content-Type": "application/json", "X-Auth": sent}, credentials: "include",
+    body: opt.body !== undefined ? JSON.stringify(opt.body) : undefined});
+  } catch (e) { r = null; }
+  // a short network drop or a server restart (Railway redeploy) is retried silently for reads
+  if (r && ![502, 503, 504].includes(r.status)) break;
+  if (method !== "GET" || i >= 2) { if (!r) throw new Error("اتصال به سرور برقرار نشد؛ اینترنت را بررسی کنید و دوباره تلاش کنید"); break; }
+  await new Promise(x => setTimeout(x, 800 * (i + 1)));
+ }
+ if (r.status === 401 && !opt.open) {
+  if (sent && sent !== TOKEN) throw new Error("ابتدا وارد شوید"); // an old request finished after a fresh login: ignore it
+  TOKEN = ""; STORE.removeItem("jx_t"); showLogin(started ? "مدت ورود شما تمام شد؛ دوباره وارد شوید" : ""); throw new Error("ابتدا وارد شوید");
+ }
+ if ([502, 503, 504].includes(r.status)) throw new Error("سرور در حال راه‌اندازی مجدد است؛ چند ثانیه دیگر دوباره تلاش کنید");
+ const d = await r.json().catch(() => ({}));
+ if (!r.ok) throw new Error(d.error || "خطا در ارتباط با سرور");
+ if (d && d.token) { TOKEN = d.token; STORE.setItem("jx_t", TOKEN); }
+ return d;
+}
+async function act(btn, fn, okMsg) {
+ let html;
+ if (btn) { html = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
+ try { const r = await fn(); if (okMsg) toast(typeof okMsg === "function" ? okMsg(r) : okMsg); return r; }
+ catch (e) { toast(e.message, 1); }
+ finally { if (btn && document.body.contains(btn)) { btn.disabled = false; btn.innerHTML = html; } }
+}
+
+/* ============ ui primitives ============ */
+function toast(m, e) {
+ if (e && m === "ابتدا وارد شوید") return;
+ const t = document.createElement("div"); t.className = "toast" + (e ? " e" : ""); t.innerHTML = `<i class="d"></i><span>${esc(m)}</span>`;
+ $("toasts").appendChild(t); setTimeout(() => { t.classList.add("out"); setTimeout(() => t.remove(), 400); }, 3200);
+}
+let modalOk = null;
+function modal(title, body, okText, onOk, opts = {}) {
+ clearTimeout(smartTimer); smartGen++;
+ const m = $("mdl"); m.className = "mdl" + (opts.wide ? " wide" : "");
+ m.innerHTML = `<h3>${title}</h3><div>${body}</div>${okText !== null ? `<div class="act">${okText ? `<button class="btn ${opts.danger ? "bad" : ""}" id="mok">${okText}</button>` : ""}<button class="btn o" id="mcl">${okText ? "انصراف" : "بستن"}</button></div>` : ""}`;
+ $("ov").classList.add("on"); modalOk = onOk;
+ if ($("mcl")) $("mcl").onclick = closeM;
+ if ($("mok")) $("mok").onclick = async () => { let ok = true; await act($("mok"), async () => { try { if (onOk && (await onOk()) === false) ok = false; } catch (e) { ok = false; throw e; } }); if (ok) closeM(); };
+ setTimeout(() => { const f = qs("input,textarea,select", m); if (f && !opts.nofocus) f.focus(); }, 120);
+}
+let smartTimer = null, smartGen = 0;
+function closeM() { clearTimeout(smartTimer); smartGen++; $("ov").classList.remove("on"); }
+$("ov").addEventListener("mousedown", e => { if (e.target.id === "ov") closeM(); });
+function confirmM(text, fn, ok = "تأیید", danger = true) { modal("تأیید عملیات", `<p class="muted" style="font-size:13.5px">${text}</p>`, ok, fn, {danger, nofocus: 1}); }
+function lightbox(src) { $("lbimg").src = src; $("lbox").classList.add("on"); }
+$("lbox").onclick = () => $("lbox").classList.remove("on");
+
+document.addEventListener("pointerdown", e => {
+ const b = e.target.closest(".btn,.ib"); if (!b) return;
+ const r = b.getBoundingClientRect(), s = Math.max(r.width, r.height), x = document.createElement("span");
+ x.className = "rip"; x.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
+ b.appendChild(x); setTimeout(() => x.remove(), 600);
+});
+document.addEventListener("pointermove", e => {
+ const c = e.target.closest && e.target.closest(".card"); if (!c) return;
+ const r = c.getBoundingClientRect(); c.style.setProperty("--mx", (e.clientX - r.left) + "px"); c.style.setProperty("--my", (e.clientY - r.top) + "px");
+});
+function countUp(root) {
+ qsa("[data-count]", root).forEach(el => {
+  const to = +el.dataset.count || 0, fmt = el.dataset.fmt, t0 = performance.now(), dur = 1300;
+  const f = t => { const p = Math.min(1, (t - t0) / dur), v = to * (1 - Math.pow(1 - p, 4)); el.textContent = fmt === "money" ? money(v) : fmt === "short" ? short(v) : sep(v); if (p < 1) requestAnimationFrame(f); };
+  requestAnimationFrame(f);
+ });
+}
+function stagger(root) { [...root.children].forEach((c, i) => c.style.setProperty("--i", i)); qsa(".grid", root).forEach(g => [...g.children].forEach((c, i) => c.style.setProperty("--i", i))); }
+const theme = () => { const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; document.documentElement.dataset.theme = t; STORE.setItem("jx_theme", t); };
+document.documentElement.dataset.theme = STORE.getItem("jx_theme") || "dark";
+
+/* ============ charts ============ */
+function areaChart(el, pts, opt = {}) {
+ const W = 700, H = 240, n = pts.length; if (!n) { el.innerHTML = empty("داده‌ای وجود ندارد"); return; }
+ const mx = Math.max(1, ...pts.map(p => p.v)) * 1.15, X = i => n === 1 ? W / 2 : i * W / (n - 1), Y = v => H - v / mx * H;
+ const P = pts.map((p, i) => [X(i), Y(p.v)]);
+ let d = `M${P[0][0]},${P[0][1]}`;
+ for (let i = 1; i < n; i++) { const [x0, y0] = P[i - 1], [x1, y1] = P[i], cx = (x0 + x1) / 2; d += ` C${cx},${y0} ${cx},${y1} ${x1},${y1}`; }
+ const id = "g" + Math.random().toString(36).slice(2, 7), c = opt.color || "#5b8cff";
+ el.innerHTML = `<div class="chart-wrap"><svg viewBox="0 -10 ${W} ${H + 30}" preserveAspectRatio="none" style="direction:ltr">
+  <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".42"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient>
+  <filter id="${id}f"><feGaussianBlur stdDeviation="6"/></filter></defs>
+  ${[0, 1, 2, 3, 4].map(i => `<line x1="0" x2="${W}" y1="${i * H / 4}" y2="${i * H / 4}" stroke="currentColor" stroke-opacity=".07" stroke-dasharray="4 6"/>`).join("")}
+  <path class="ar" d="${d} L${W},${H} L0,${H}Z" fill="url(#${id})"/>
+  <path class="ln" d="${d}" fill="none" stroke="${c}" stroke-width="6" stroke-opacity=".35" filter="url(#${id}f)" vector-effect="non-scaling-stroke"/>
+  <path class="ln" d="${d}" fill="none" stroke="${c}" stroke-width="2.6" vector-effect="non-scaling-stroke"/>
+  <line class="vl" x1="0" x2="0" y1="0" y2="${H}" stroke="${c}" stroke-opacity="0" stroke-dasharray="3 4"/>
+  <circle class="cp" r="5" fill="${c}" stroke="#fff" stroke-width="2" opacity="0"/></svg>
+  <div class="tip"></div>
+  <div class="muted" style="display:flex;justify-content:space-between;margin-top:4px;font-size:11.5px"><span>${esc(pts[0].l)}</span><span>${esc(pts[Math.floor(n / 2)].l)}</span><span>${esc(pts[n - 1].l)}</span></div></div>`;
+ const svg = qs("svg", el), tip = qs(".tip", el), vl = qs(".vl", el), cp = qs(".cp", el);
+ svg.addEventListener("pointermove", e => {
+  const r = svg.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * W, i = Math.max(0, Math.min(n - 1, Math.round(x / W * (n - 1))));
+  vl.setAttribute("x1", P[i][0]); vl.setAttribute("x2", P[i][0]); vl.setAttribute("stroke-opacity", ".5");
+  cp.setAttribute("cx", P[i][0]); cp.setAttribute("cy", P[i][1]); cp.setAttribute("opacity", 1);
+  tip.innerHTML = `<b>${opt.fmt ? opt.fmt(pts[i].v) : sep(pts[i].v)}</b>${esc(pts[i].l)}${pts[i].x ? " | " + esc(pts[i].x) : ""}`;
+  tip.style.left = (P[i][0] / W * r.width) + "px"; tip.style.top = ((P[i][1] + 10) / (H + 30) * r.height) + "px"; tip.style.opacity = 1;
+ });
+ svg.addEventListener("pointerleave", () => { tip.style.opacity = 0; cp.setAttribute("opacity", 0); vl.setAttribute("stroke-opacity", 0); });
+}
+function spark(vals, c) {
+ if (!vals || vals.length < 2) return "";
+ const W = 200, H = 56, mx = Math.max(1, ...vals), P = vals.map((v, i) => [i * W / (vals.length - 1), H - 4 - v / mx * (H - 14)]);
+ const d = P.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+ return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="direction:ltr"><defs><linearGradient id="s${c.slice(1)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".3"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs><path d="${d} L${W},${H} L0,${H}Z" fill="url(#s${c.slice(1)})"/><path class="ln" d="${d}" fill="none" stroke="${c}" stroke-width="2" vector-effect="non-scaling-stroke" style="stroke-dasharray:3000;stroke-dashoffset:3000;animation:draw 2s var(--ease) forwards"/></svg>`;
+}
+function donut(parts, size = 170) {
+ const tot = parts.reduce((a, p) => a + p.v, 0) || 1, R = 62, C = 2 * Math.PI * R; let off = 0;
+ const segs = parts.map(p => { const len = p.v / tot * C, s = `<circle r="${R}" cx="85" cy="85" fill="none" stroke="${p.c}" stroke-width="16" stroke-linecap="round" stroke-dasharray="0 ${C}" data-d="${Math.max(0, len - 3)} ${C}" stroke-dashoffset="${-off}" transform="rotate(-90 85 85)"/>`; off += len; return s; }).join("");
+ return `<svg class="donut" viewBox="0 0 170 170" width="${size}" height="${size}"><circle r="${R}" cx="85" cy="85" fill="none" stroke="currentColor" stroke-opacity=".07" stroke-width="16"/>${segs}<text x="85" y="80" text-anchor="middle" fill="currentColor" font-size="24" font-weight="900">${sep(parts.reduce((a, p) => a + p.v, 0))}</text><text x="85" y="102" text-anchor="middle" fill="currentColor" opacity=".55" font-size="11">سفارش</text></svg>`;
+}
+function animDonuts(root) { requestAnimationFrame(() => setTimeout(() => qsa("circle[data-d]", root).forEach(c => c.setAttribute("stroke-dasharray", c.dataset.d)), 60)); }
+function ring(p, c = "#5b8cff") {
+ const R = 26, C = 2 * Math.PI * R, v = Math.max(0, Math.min(1, p));
+ return `<svg class="ring donut" viewBox="0 0 64 64"><circle r="${R}" cx="32" cy="32" fill="none" stroke="currentColor" stroke-opacity=".08" stroke-width="7"/><circle r="${R}" cx="32" cy="32" fill="none" stroke="${c}" stroke-width="7" stroke-linecap="round" stroke-dasharray="0 ${C}" data-d="${v * C} ${C}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" font-size="13" font-weight="800" fill="currentColor">${fa(Math.round(v * 100))}٪</text></svg>`;
+}
+
+/* ============ telegram preview ============ */
+const tgHtml = t => esc(t).replace(/&lt;(\/?)(b|i|u|s|code|pre|blockquote)&gt;/g, "<$1$2>");
+function phone(text, buttons, admin) {
+ let kb = "";
+ if (buttons) {
+  let list = buttons.filter(b => b.enabled && (b.type !== "link" || b.value));
+  if (admin) list = list.concat([{text: "پنل مدیریت", style: "primary", wide: true}]);
+  kb = `<div class="kb">${list.map((b, i) => `<div class="st-${b.style || ""} ${b.wide ? "w" : ""}" style="animation-delay:${i * 40}ms">${esc(b.text)}</div>`).join("")}</div>`;
+ }
+ const bn = (BOT && BOT.name) || "ربات فروش";
+ return `<div class="phone"><div class="tgh"><div class="ava">${esc(bn[0])}</div><div>${esc(bn)}<small>bot</small></div></div><div class="tgb"><div class="msg">${tgHtml(text)}</div>${kb}</div></div>`;
+}
+const fillVars = t => (t || "").replace(/{name}/g, "علی").replace(/{amount}/g, "۱۴۵٬۰۰۰ تومان").replace(/{card}/g, "6037 9900 0000 0000").replace(/{owner}/g, "نام صاحب کارت").replace(/{bank}/g, "(ملی)").replace(/{plan}/g, "یک ماهه ۵۰ گیگ").replace(/{volume}/g, "۵۰ گیگ").replace(/{expire}/g, "۱۴۰۵/۰۸/۲۳").replace(/{link}/g, "https://sub.example.com/abc").replace(/{id}/g, "۱۰۵۲").replace(/{balance}/g, "۲۴۵٬۰۰۰ تومان").replace(/{min}/g, "۵۰٬۰۰۰ تومان").replace(/{percent}/g, "۱۰").replace(/{count}/g, "۱۲").replace(/{earned}/g, "۸۵٬۰۰۰ تومان");
+
+/* ============ state / nav ============ */
+let BOT = {}, CUR = "dash", PENDING = 0, TICKETS = 0, SETTINGS = null, BRAND = BRAND_CHANNEL_DEFAULT, timers = [];
+const NAV = [["sec","اصلی"],["dash","داشبورد"],["orders","سفارش‌ها و رسیدها"],["users","کاربران"],["services","سرویس‌ها"],["tickets","تیکت‌ها"],
+ ["sec","فروش"],["plans","پلن‌ها و تعرفه"],["servers","سرورها و پنل‌ها"],["pay","پرداخت و کارت‌ها"],["disc","تخفیف و زیرمجموعه"],["resellers","نمایندگان فروش"],
+ ["sec","ربات"],["buttons","طراحی دکمه‌ها"],["texts","متن‌های ربات"],["bc","پیام همگانی"],["bot","اتصال ربات"],["admins","ادمین‌ها"],
+ ["sec","سیستم"],["settings","تنظیمات"],["logs","گزارش فعالیت"]];
+const SUB = {dash:"نمای زنده فروش و عملکرد ربات",orders:"بررسی رسیدها و مدیریت سفارش‌ها",users:"کاربران، کیف پول و دسترسی‌ها",services:"همه سرویس‌های فروخته‌شده",tickets:"پاسخ به درخواست‌های کاربران",
+ plans:"تعریف و قیمت‌گذاری سرویس‌ها",servers:"اتصال به هر پنلی: Marzban، Marzneshin، 3x-ui، Hiddify، API سفارشی یا کانفیگ دستی",pay:"کارت‌های بانکی و روش‌های پرداخت",disc:"کدهای تخفیف و سیستم دعوت",
+ resellers:"همکاران فروش با قیمت ویژه",buttons:"متن، رنگ، ترتیب و چیدمان دکمه‌های ربات",texts:"ویرایش همه پیام‌های ربات",bc:"ارسال پیام به گروه‌های مختلف کاربران",bot:"توکن، لینک پنل و وضعیت اتصال",
+ admins:"ادمین‌ها و سطح دسترسی",settings:"قابلیت‌ها و تنظیمات عمومی",logs:"آخرین فعالیت‌های سیستم"};
+function renderNav() {
+ $("nav").innerHTML = '<div class="ind" id="ind"></div>' + NAV.map(([k, l]) => k === "sec" ? `<div class="sec">${l}</div>` :
+  `<a data-k="${k}" class="${k === CUR ? "on" : ""}" href="#${k}">${ic(k)}<span>${l}</span>${k === "orders" && PENDING ? `<span class="bdg">${fa(PENDING)}</span>` : ""}${k === "tickets" && TICKETS ? `<span class="bdg">${fa(TICKETS)}</span>` : ""}</a>`).join("");
+ moveInd();
+}
+function moveInd() { const a = qs(`nav a[data-k="${CUR}"]`), ind = $("ind"); if (a && ind) { ind.style.transform = `translateY(${a.offsetTop}px)`; ind.style.height = a.offsetHeight + "px"; } }
+function setStatus(b) {
+ if (!b) return; BOT = {name: b.name, username: b.username};
+ $("dot").classList.toggle("on", !!b.running); $("st").textContent = b.running ? "ربات آنلاین" + (b.username ? " | @" + b.username : "") : "ربات خاموش است";
+}
+async function poll() { if (document.body.classList.contains("auth")) return null; try { const d = await api("/dashboard"); const np = d.pending, nt = d.tickets; if (np > PENDING && PENDING >= 0 && CUR !== "orders") toast("رسید جدید دریافت شد"); const ch = np !== PENDING || nt !== TICKETS; PENDING = np; TICKETS = nt; setStatus(d.bot); if (ch) renderNav(); return d; } catch (e) { return null; } }
+
+async function go(k, push = true) {
+ try { await goInner(k, push); } catch (e) { const v = $("view"); if (v) v.innerHTML = `<div class="page"><div class="card">${empty("خطا در نمایش این بخش: " + esc(e.message))}</div></div>`; }
+}
+let viewGen = 0;
+const VCACHE = {}, CACHEABLE = new Set(["dash", "orders", "users", "services", "tickets", "plans", "servers", "pay", "disc", "resellers", "admins", "logs"]);
+async function goInner(k, push) {
+ if (!P[k]) k = "dash";
+ const same = CUR === k && !push; // reload of the page already on screen
+ CUR = k; const gen = ++viewGen; // only the newest load may draw the page
+ timers.forEach(clearInterval); timers = [];
+ if (push && location.hash !== "#" + k) safeHist(null, "", "#" + k);
+ qsa("nav a").forEach(a => a.classList.toggle("on", a.dataset.k === k)); moveInd();
+ $("ttl").textContent = NAV.find(n => n[0] === k)[1]; $("sub").textContent = SUB[k] || "";
+ $("sb").classList.remove("open"); $("sbo").classList.remove("on"); closeM(); $("lbox").classList.remove("on");
+ const v = $("view"), cached = CACHEABLE.has(k) ? VCACHE[k] : undefined;
+ const draw = (data, anim) => {
+  const y = window.scrollY;
+  v.innerHTML = `<div class="page${anim ? "" : " still"}">${P[k].render(data)}</div>`;
+  const pg = qs(".page", v); if (anim) { stagger(pg); countUp(pg); } else { qsa("[data-count]", pg).forEach(el => { const t = +el.dataset.count || 0, f = el.dataset.fmt; el.textContent = f === "money" ? money(t) : f === "short" ? short(t) : sep(t); }); }
+  animDonuts(pg);
+  timers.forEach(clearInterval); timers = [];
+  P[k].after && P[k].after(data);
+  if (!anim && same) window.scrollTo(0, y);
+ };
+ if (same && v.firstElementChild) { /* keep the current page visible until fresh data arrives: no flashing */ }
+ else if (cached) { try { draw(cached.data, false); } catch (e) { delete VCACHE[k]; } } // revisited page appears instantly
+ else v.innerHTML = `<div class="page"><div class="grid g4">${'<div class="card"><div class="sk" style="height:110px"></div></div>'.repeat(4)}</div><div class="card mt"><div class="sk" style="height:260px"></div></div></div>`;
+ if (!same) { try { window.scrollTo({top: 0, behavior: "smooth"}); } catch (e) {} }
+ try {
+  const data = P[k].load ? await P[k].load() : null; if (gen !== viewGen || CUR !== k) return;
+  const js = CACHEABLE.has(k) ? JSON.stringify(data) : null;
+  if (js && cached && cached.js === js && !same) return; // nothing changed since last visit
+  if (js) VCACHE[k] = {data, js};
+  draw(data, !cached && !same);
+ } catch (e) { if (gen === viewGen && CUR === k && !(e && e.message === "ابتدا وارد شوید")) v.innerHTML = `<div class="page"><div class="card">${empty(esc(e.message))}</div></div>`; }
+}
+const reload = () => go(CUR, false);
+window.addEventListener("hashchange", () => { const k = location.hash.slice(1); if (k && k !== CUR && P[k]) go(k, false); });
+window.addEventListener("resize", debounce(moveInd, 100));
+
+/* ============ labels ============ */
+const OS = {pending:["در انتظار بررسی","w"],approved:["تأیید شده","ok"],paid:["پرداخت از کیف پول","b"],rejected:["رد شده","bad"],failed:["ناموفق","bad"]};
+const KIND = {buy:"خرید",renew:"تمدید",charge:"شارژ کیف پول"};
+const ROLE = {owner:["مالک","g"],full:["مدیر کل","b"],pay:["تأیید پرداخت","ok"],support:["پشتیبانی","w"]};
+const otag = s => `<span class="tag ${(OS[s] || ["", "n"])[1]}">${(OS[s] || [s])[0]}</span>`;
+const ucell = o => `<div class="user-cell">${av(o.first_name, o.user_id || o.id)}<div><b>${esc(o.first_name || "بدون نام")}</b><small class="mono">${o.username ? "@" + esc(o.username) : esc(o.user_id || o.id)}</small></div></div>`;
+const P = {};
+/* ============ pages ============ */
+const F = (label, inner, cls = "") => `<div class="${cls}"><label class="l">${label}</label>${inner}</div>`;
+const val = id => ($(id) ? $(id).value.trim() : "");
+const nval = id => Number(String(val(id)).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[^\d.]/g, "")) || 0;
+
+/* ---------- dashboard ---------- */
+let dashMode = "s";
+P.dash = {
+ load: () => api("/dashboard"),
+ render: d => {
+  PENDING = d.pending; TICKETS = d.tickets; setStatus(d.bot); renderNav();
+  const tr = d.sales_yesterday ? Math.round((d.sales_today - d.sales_yesterday) / d.sales_yesterday * 100) : (d.sales_today ? 100 : 0);
+  const stat = (k, c, label, v, fmt, extra, sp) => `<div class="card stat"><div class="top"><div class="ic" style="background:${c}1f;color:${c}">${ic(k)}</div>${extra || ""}</div><small>${label}</small><b data-count="${v}" data-fmt="${fmt}">۰</b>${spark(sp, c)}</div>`;
+  const st = {}; (d.status || []).forEach(x => st[x.status] = x.c);
+  const parts = [{l: "تأیید شده", v: st.approved || 0, c: "#22c55e"}, {l: "کیف پول", v: st.paid || 0, c: "#5b8cff"}, {l: "در انتظار", v: st.pending || 0, c: "#f59e0b"}, {l: "رد شده", v: st.rejected || 0, c: "#f43f5e"}, {l: "ناموفق", v: st.failed || 0, c: "#a78bfa"}];
+  const topMax = Math.max(1, ...(d.top || []).map(t => t.c));
+  const b = d.bot || {};
+  return `${d.volume_ok === false ? `<div class="hint" style="margin:0 0 16px;border-color:rgba(244,63,94,.35);background:rgba(244,63,94,.07)"><b>هشدار مهم:</b> حافظه دائمی (Volume) در Railway وصل نیست؛ با هر ری‌استارت یا آپدیت، کاربران، سفارش‌ها و تنظیمات پاک می‌شوند. در Railway روی سرویس کلیک راست کنید، Attach Volume را بزنید و مسیر را <b class="mono">/data</b> قرار دهید.</div>` : ""}
+  <div class="grid g4">
+   ${stat("money", "#5b8cff", "فروش امروز", d.sales_today, "money", `<span class="tr ${tr >= 0 ? "up" : "dn"}">${tr >= 0 ? "+" : ""}${fa(tr)}٪</span>`, d.series.map(x => x.s))}
+   ${stat("users", "#f6b44d", "کاربران ربات", d.users, "", `<span class="tr up">+${fa(d.users_today)} امروز</span>`, d.users_series)}
+   ${stat("services", "#2dd4bf", "سرویس‌های فعال", d.active, "", `<span class="tr up">+${fa(d.services_today)} امروز</span>`, d.series.map(x => x.c))}
+   ${stat("orders", "#f43f5e", "رسیدهای در انتظار", d.pending, "", d.pending ? `<a class="btn sm" href="#orders">بررسی</a>` : `<span class="tr up">بررسی شده</span>`, null)}
+  </div>
+  <div class="grid g21 mt">
+   <div class="card"><h3><span>روند ۳۰ روز اخیر <small>| فروش ماه: ${money(d.sales_month)}</small></span><div class="tabs" id="dtabs"><a data-m="s">فروش</a><a data-m="c">سفارش‌ها</a><a data-m="u">کاربران جدید</a></div></h3><div id="chart"></div></div>
+   <div class="card"><h3>وضعیت سفارش‌ها</h3><div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;justify-content:center">${donut(parts)}<div class="legend">${parts.map(p => `<span><i style="background:${p.c}"></i>${p.l}<b style="margin-right:auto;padding-right:14px">${fa(p.v)}</b></span>`).join("")}</div></div></div>
+  </div>
+  <div class="grid g3 mt">
+   <div class="card"><h3>ظرفیت سرورها <a class="btn o sm" href="#servers">مدیریت</a></h3>${(d.servers || []).length ? d.servers.map((s, i) => `<div class="li"><div class="t"><b>${esc(s.name || "سرور")}</b><small>${esc(s.type)} | ${fa(s.used)} سرویس فعال${s.capacity ? " از " + fa(s.capacity) : ""}</small></div>${ring(s.capacity ? s.used / s.capacity : 0, COLORS[i % 7])}</div>`).join("") : empty("هنوز سروری متصل نشده", "servers")}</div>
+   <div class="card"><h3>پرفروش‌ترین پلن‌ها</h3>${(d.top || []).length ? d.top.map(t => `<div style="margin-bottom:14px"><div class="kpi"><span>${esc(t.name || "-")}</span><span class="muted">${fa(t.c)} فروش</span></div><div class="prog"><i style="width:${t.c / topMax * 100}%"></i></div></div>`).join("") : empty("هنوز فروشی ثبت نشده", "plans")}</div>
+   <div class="card"><h3>وضعیت ربات <a class="btn o sm" href="#bot">تنظیمات</a></h3>
+    <div class="li"><span class="muted">وضعیت</span><span class="tag ${b.running ? "ok" : "bad"}">${b.running ? "آنلاین" : "خاموش"}</span></div>
+    <div class="li"><span class="muted">یوزرنیم</span>${b.username ? `<a class="mono" target="_blank" href="https://t.me/${esc(b.username)}">@${esc(b.username)}</a>` : "-"}</div>
+    <div class="li"><span class="muted">زمان فعالیت</span><span>${b.running && b.started ? ago(b.started).replace(" پیش", "") : "-"}</span></div>
+    <div class="li"><span class="muted">درخواست‌های پردازش‌شده</span><b data-count="${b.updates || 0}">۰</b></div>
+    <div class="li"><span class="muted">موجودی کیف پول کاربران</span><b>${money(d.wallets)}</b></div>
+    <div class="li"><span class="muted">تیکت‌های باز</span><a href="#tickets"><b>${fa(d.tickets)}</b></a></div></div>
+  </div>
+  <div class="card mt"><h3>آخرین سفارش‌ها <a class="btn o sm" href="#orders">همه سفارش‌ها</a></h3><div class="tw">${otable(d.recent)}</div></div>`;
+ },
+ after: d => {
+  const draw = () => {
+   qsa("#dtabs a").forEach(a => a.classList.toggle("on", a.dataset.m === dashMode));
+   const lab = x => jd(x.d).slice(5);
+   if (dashMode === "s") areaChart($("chart"), d.series.map(x => ({v: x.s, l: lab(x), x: fa(x.c) + " سفارش"})), {fmt: money});
+   else if (dashMode === "c") areaChart($("chart"), d.series.map(x => ({v: x.c, l: lab(x)})), {color: "#2dd4bf", fmt: v => fa(v) + " سفارش"});
+   else areaChart($("chart"), d.series.map((x, i) => ({v: d.users_series[i] || 0, l: lab(x)})), {color: "#f6b44d", fmt: v => fa(v) + " کاربر"});
+  };
+  qsa("#dtabs a").forEach(a => a.onclick = () => { dashMode = a.dataset.m; draw(); });
+  draw();
+ }
+};
+function otable(list, actions) {
+ if (!list || !list.length) return empty("سفارشی وجود ندارد", "orders");
+ return `<table><thead><tr><th>شماره</th><th>کاربر</th><th>نوع</th><th>پلن</th><th>مبلغ</th><th>روش</th><th>وضعیت</th><th>زمان</th>${actions ? "<th></th>" : ""}</tr></thead><tbody>${list.map((o, i) => `<tr style="animation-delay:${i * 35}ms">
+  <td><b>${fa(o.id)}</b></td><td>${ucell(o)}</td><td>${KIND[o.kind] || o.kind}</td><td>${esc(o.plan_name || "-")}</td>
+  <td><b>${money(o.amount)}</b>${o.discount_code ? `<div class="muted mono">${esc(o.discount_code)}</div>` : ""}</td><td class="muted">${o.method === "wallet" ? "کیف پول" : "کارت به کارت"}</td>
+  <td>${otag(o.status)}${o.note ? `<div class="muted" style="max-width:200px;white-space:normal">${esc(o.note)}</div>` : ""}</td><td class="muted">${jdt(o.handled_at || o.created)}</td>
+  ${actions ? `<td>${o.status === "pending" ? `<button class="btn ok sm" onclick="approveO(${o.id},this)">تأیید</button> <button class="btn bad sm" onclick="rejectO(${o.id})">رد</button>` : ""}${o.has_receipt ? ` <button class="btn o sm" onclick="showReceipt(${o.id})">رسید</button>` : ""}</td>` : ""}</tr>`).join("")}</tbody></table>`;
+}
+async function receiptURL(id) { const r = await (window.DEMO_FETCH || window.fetch)("/api/receipt/" + id, {headers: {"X-Auth": TOKEN}, credentials: "include"}); if (!r.ok) throw new Error("تصویر رسید در دسترس نیست"); return URL.createObjectURL(await r.blob()); }
+async function showReceipt(id) { try { lightbox(await receiptURL(id)); } catch (e) { toast(e.message, 1); } }
+async function approveO(id, b) { await act(b, () => api(`/orders/${id}/approve`, {body: {}}), r => r.msg); reload(); poll(); }
+function rejectO(id) { modal("رد رسید سفارش " + fa(id), F("علت رد (برای کاربر ارسال می‌شود، اختیاری)", `<textarea id="m_reason" rows="3"></textarea>`), "رد رسید", async () => { await api(`/orders/${id}/reject`, {body: {reason: val("m_reason")}}); toast("رسید رد شد و به کاربر اطلاع داده شد"); reload(); poll(); }, {danger: 1}); }
+
+/* ---------- orders ---------- */
+let ofl = "pending", oq = "", opage = 0;
+P.orders = {
+ load: () => api(`/orders?status=${ofl}&q=${encodeURIComponent(oq)}&page=${opage}`),
+ render: d => {
+  const tabs = [["pending", "در انتظار"], ["approved", "تأیید شده"], ["paid", "کیف پول"], ["rejected", "رد شده"], ["failed", "ناموفق"], ["", "همه"]];
+  const body = ofl === "pending" ? (d.items.length ? `<div class="grid g4">${d.items.map(o => `<div class="rc"><div class="rimg" data-rid="${o.id}"><div class="sk" style="width:100%;height:100%"></div></div>
+     <div style="display:flex;justify-content:space-between;align-items:center"><b>${esc(o.plan_name || KIND[o.kind])}</b><span class="tag w">${fa(o.id)}</span></div>
+     ${ucell(o)}<div style="margin:8px 0 12px;font-size:16px;font-weight:900">${money(o.amount)}</div><div class="muted mono" style="margin:-8px 0 10px">${esc(o.card || "")}</div>
+     <div class="row" style="gap:6px"><button class="btn ok sm" onclick="approveO(${o.id},this)">${ic("check")}تأیید و تحویل</button><button class="btn bad sm f0" onclick="rejectO(${o.id})">رد</button></div></div>`).join("")}</div>` : `<div class="card">${empty("رسید در انتظاری وجود ندارد. همه چیز مرتب است.", "check")}</div>`)
+   : `<div class="card"><div class="tw">${otable(d.items, 1)}</div></div>`;
+  return `<div class="toolbar"><div class="tabs">${tabs.map(([k, l]) => `<a class="${ofl === k ? "on" : ""}" onclick="ofl='${k}';opage=0;reload()">${l}</a>`).join("")}</div>
+   <div class="search">${ic("search")}<input id="oq" placeholder="شماره سفارش، آیدی یا یوزرنیم" value="${esc(oq)}"></div><button class="btn o sm" onclick="reload()">${ic("refresh")}</button></div>${body}
+   ${(d.more || opage) ? `<div class="row mt" style="justify-content:center">${opage ? `<button class="btn o f0" onclick="opage--;reload()">صفحه قبل</button>` : ""}${d.more ? `<button class="btn o f0" onclick="opage++;reload()">صفحه بعد</button>` : ""}</div>` : ""}`;
+ },
+ after: () => {
+  $("oq").addEventListener("input", debounce(() => { oq = val("oq"); opage = 0; reload(); }, 450));
+  qsa("[data-rid]").forEach(async el => { try { const u = await receiptURL(el.dataset.rid); el.innerHTML = `<img src="${u}" alt="رسید">`; el.onclick = () => lightbox(u); } catch (e) { el.innerHTML = "تصویر رسید در دسترس نیست"; } });
+  timers.push(setInterval(() => { if (ofl === "pending" && !$("ov").classList.contains("on")) api("/orders?status=pending").then(d => { if (d.items.length !== qsa("[data-rid]").length) reload(); }).catch(() => {}); }, 15000));
+ }
+};
+
+/* ---------- users ---------- */
+let uq = "", uf = "", upage = 0;
+P.users = {
+ render: () => `<div class="toolbar"><div class="search">${ic("search")}<input id="uq" placeholder="آیدی، یوزرنیم، نام یا شماره" value="${esc(uq)}"></div>
+  <div class="chips">${[["", "همه"], ["buyers", "خریداران"], ["resellers", "نمایندگان"], ["banned", "مسدود"]].map(([k, l]) => `<span class="chip ${uf === k ? "on" : ""}" onclick="uf='${k}';upage=0;reload()">${l}</span>`).join("")}</div></div>
+  <div class="card"><h3>کاربران <small id="utot"></small></h3><div class="tw" id="ut"><div class="sk" style="height:300px"></div></div><div id="upg" class="row mt" style="justify-content:center"></div></div>`,
+ after: () => { $("uq").addEventListener("input", debounce(() => { uq = val("uq"); upage = 0; loadUsers(); }, 400)); loadUsers(); }
+};
+let usersReq = 0;
+async function loadUsers() {
+ const req = ++usersReq;
+ try {
+  const d = await api(`/users?q=${encodeURIComponent(uq)}&f=${uf}&page=${upage}`); if (req !== usersReq || !$("ut")) return;
+  $("utot").textContent = "| " + sep(d.total) + " نفر";
+  $("ut").innerHTML = d.items.length ? `<table><thead><tr><th>کاربر</th><th>آیدی عددی</th><th>سرویس فعال</th><th>کیف پول</th><th>زیرمجموعه</th><th>عضویت</th><th>آخرین فعالیت</th><th>وضعیت</th></tr></thead><tbody>${d.items.map((u, i) => `<tr class="click" style="animation-delay:${i * 25}ms" onclick="userModal(${u.id})">
+   <td><div class="user-cell">${av(u.first_name, u.id)}<div><b>${esc(u.first_name || "بدون نام")}</b><small class="mono">${u.username ? "@" + esc(u.username) : "-"}</small></div></div></td>
+   <td class="mono">${u.id}</td><td>${fa(u.services)}</td><td><b>${money(u.balance)}</b></td><td>${fa(u.refs)}</td><td class="muted">${jd(u.created)}</td><td class="muted">${u.last_seen ? ago(u.last_seen) : "-"}</td>
+   <td>${u.banned ? '<span class="tag bad">مسدود</span>' : u.is_reseller ? '<span class="tag g">نماینده</span>' : '<span class="tag ok">فعال</span>'}</td></tr>`).join("")}</tbody></table>` : empty("کاربری یافت نشد", "users");
+  $("upg").innerHTML = `${upage ? `<button class="btn o f0" onclick="upage--;loadUsers()">صفحه قبل</button>` : ""}${d.more ? `<button class="btn o f0" onclick="upage++;loadUsers()">صفحه بعد</button>` : ""}`;
+ } catch (e) { if (req === usersReq && $("ut")) $("ut").innerHTML = empty(esc(e.message)); }
+}
+async function userModal(id) {
+ let u; try { u = await api("/users/" + id); } catch (e) { return toast(e.message, 1); }
+ const svc = u.services.length ? u.services.map(s => `<div class="li"><div class="t"><b>${esc(s.plan_name)}</b><small class="mono">${esc(s.name)} | ${s.status === "active" ? "انقضا " + jd(s.expire_at) : "منقضی"}</small></div><button class="btn o sm" onclick="copyText(${esc(JSON.stringify(s.link || ""))})">${ic("copy")}</button></div>`).join("") : '<div class="muted">سرویسی ندارد</div>';
+ modal(`${av(u.first_name, u.id)}`.replace('class="av"', 'class="av" style="display:inline-grid;vertical-align:middle;margin-left:10px"') + esc(u.first_name || "کاربر"), `
+  <div class="grid g3" style="margin-top:10px">
+   <div class="card" style="padding:14px"><small class="muted">کیف پول</small><b style="display:block;font-size:17px">${money(u.balance)}</b></div>
+   <div class="card" style="padding:14px"><small class="muted">زیرمجموعه</small><b style="display:block;font-size:17px">${fa(u.refs)} نفر</b></div>
+   <div class="card" style="padding:14px"><small class="muted">درآمد معرفی</small><b style="display:block;font-size:17px">${money(u.ref_earned)}</b></div></div>
+  <div class="li"><span class="muted">آیدی عددی</span><span class="mono">${u.id}</span></div>
+  <div class="li"><span class="muted">یوزرنیم</span><span class="mono">${u.username ? "@" + esc(u.username) : "-"}</span></div>
+  <div class="li"><span class="muted">شماره تلفن</span><span class="mono">${esc(u.phone || "-")}</span></div>
+  <div class="li"><span class="muted">تاریخ عضویت</span><span>${jd(u.created)}</span></div>
+  <div class="row mt" style="gap:8px">
+   <button class="btn sm f0" onclick="walletM(${u.id})">${ic("wallet")}کیف پول</button>
+   <button class="btn o sm f0" onclick="msgM(${u.id})">${ic("bc")}ارسال پیام</button>
+   <button class="btn o sm f0" onclick="resM(${u.id},${u.is_reseller},${u.reseller_discount || 0})">نمایندگی</button>
+   ${u.test_used ? `<button class="btn o sm f0" onclick="act(this,()=>api('/users/${u.id}/reset-test',{body:{}}),'اکانت تست دوباره فعال شد')">ریست اکانت تست</button>` : ""}
+   <button class="btn sm f0 ${u.banned ? "ok" : "bad"}" onclick="act(this,()=>api('/users/${u.id}/ban',{body:{ban:${u.banned ? 0 : 1}}}),'${u.banned ? "کاربر رفع مسدودی شد" : "کاربر مسدود شد"}').then(r=>{if(!r)return;closeM();if($('ut'))loadUsers()})">${u.banned ? "رفع مسدودی" : "مسدود کردن"}</button></div>
+  <h3 style="margin-top:20px;font-size:14px">سرویس‌ها</h3>${svc}
+  <h3 style="margin-top:20px;font-size:14px">سفارش‌ها</h3><div class="tw">${otable(u.orders)}</div>`, "", null, {wide: 1, nofocus: 1});
+}
+function walletM(id) {
+ modal("مدیریت کیف پول", `${F("عملیات", `<select id="m_op"><option value="add">افزایش موجودی</option><option value="sub">کاهش موجودی</option><option value="set">تنظیم مقدار دقیق</option></select>`)}
+  ${F("مبلغ (تومان)", `<input id="m_am" class="ltr" inputmode="numeric">`)}<div class="li"><span>اطلاع‌رسانی به کاربر</span>${sw(1, 'id="m_nt"')}</div>`, "ثبت", async () => {
+  const r = await api(`/users/${id}/balance`, {body: {op: val("m_op"), amount: nval("m_am"), notify: $("m_nt").checked}}); toast("موجودی جدید: " + money(r.balance)); if ($("ut")) loadUsers(); });
+}
+function msgM(id) { modal("ارسال پیام به کاربر", F("متن پیام (HTML مجاز است)", `<textarea id="m_tx" rows="5"></textarea>`), "ارسال", async () => { await api(`/users/${id}/message`, {body: {text: $("m_tx").value}}); toast("پیام ارسال شد"); }); }
+function resM(id, on, d) { modal("تنظیم نمایندگی", `<div class="li"><span>نماینده فروش</span>${sw(on, 'id="m_ro"')}</div>${F("درصد تخفیف همکاری", `<input id="m_rd" class="ltr" value="${d || 20}">`)}`, "ذخیره", async () => { await api(`/users/${id}/reseller`, {body: {on: $("m_ro").checked, discount: nval("m_rd")}}); toast("ذخیره شد"); if ($("ut")) loadUsers(); if (CUR === "resellers") reload(); }); }
+
+/* ---------- services ---------- */
+let sq = "", sst = "active", spage = 0;
+P.services = {
+ render: () => `<div class="toolbar"><div class="tabs">${[["active", "فعال"], ["expired", "منقضی"], ["", "همه"]].map(([k, l]) => `<a class="${sst === k ? "on" : ""}" onclick="sst='${k}';spage=0;reload()">${l}</a>`).join("")}</div>
+  <div class="search">${ic("search")}<input id="sq" placeholder="نام سرویس، آیدی یا یوزرنیم" value="${esc(sq)}"></div></div><div class="card"><div class="tw" id="stb"><div class="sk" style="height:300px"></div></div><div id="spg" class="row mt" style="justify-content:center"></div></div>`,
+ after: () => { $("sq").addEventListener("input", debounce(() => { sq = val("sq"); spage = 0; loadSvc(); }, 400)); loadSvc(); }
+};
+let svcReq = 0;
+async function loadSvc() {
+ const req = ++svcReq;
+ try {
+  const d = await api(`/services?q=${encodeURIComponent(sq)}&status=${sst}&page=${spage}`), t = Date.now() / 1000; if (req !== svcReq || !$("stb")) return;
+  $("stb").innerHTML = d.items.length ? `<table><thead><tr><th>سرویس</th><th>کاربر</th><th>سرور</th><th>حجم</th><th>انقضا</th><th>وضعیت</th><th></th></tr></thead><tbody>${d.items.map((s, i) => {
+   const left = s.expire_at ? Math.max(0, Math.floor((s.expire_at - t) / 86400)) : null;
+   return `<tr style="animation-delay:${i * 25}ms"><td><b>${esc(s.plan_name)}</b><div class="muted mono">${esc(s.name)}</div></td><td>${ucell(s)}</td><td>${esc(s.server_name || "-")}<div class="muted">${esc(s.server_type || "")}</div></td>
+   <td>${gbt(s.volume_gb)}</td><td>${jd(s.expire_at)}${left !== null && s.status === "active" ? `<div class="muted">${fa(left)} روز مانده</div>` : ""}</td><td><span class="tag ${s.status === "active" ? (left !== null && left < 2 ? "w" : "ok") : "bad"}">${s.status === "active" ? "فعال" : "منقضی"}</span></td>
+   <td><button class="btn o sm" onclick="usageM(${s.id})">مصرف</button> <button class="btn o sm" onclick="extendM(${s.id})">تمدید</button> <button class="btn o sm" onclick="copyText(${esc(JSON.stringify(s.link || ""))})">${ic("copy")}</button> <button class="btn bad sm" onclick="confirmM('سرویس از پنل و ربات حذف شود؟',async()=>{await api('/services/${s.id}',{method:'DELETE'});toast('سرویس حذف شد');loadSvc()},'حذف')">${ic("trash")}</button></td></tr>`;
+  }).join("")}</tbody></table>` : empty("سرویسی یافت نشد", "services");
+  $("spg").innerHTML = `${spage ? `<button class="btn o f0" onclick="spage--;loadSvc()">صفحه قبل</button>` : ""}${d.more ? `<button class="btn o f0" onclick="spage++;loadSvc()">صفحه بعد</button>` : ""}`;
+ } catch (e) { if (req === svcReq && $("stb")) $("stb").innerHTML = empty(esc(e.message)); }
+}
+async function usageM(id) {
+ modal("مصرف لحظه‌ای سرویس", `<div id="um"><div class="sk" style="height:120px"></div></div>`, "", null, {nofocus: 1});
+ try {
+  const root = $("um"), u = await api(`/services/${id}/usage`), p = u.total ? u.used / u.total : 0;
+  if (!root || root !== $("um") || !root.isConnected) return; // modal was closed or replaced meanwhile
+  $("um").innerHTML = `<div style="display:flex;align-items:center;gap:20px;margin:10px 0">${ring(p, p > .9 ? "#f43f5e" : p > .7 ? "#f59e0b" : "#5b8cff").replace('class="ring donut"', 'class="ring donut" style="width:110px;height:110px"')}
+   <div><div class="li"><span class="muted">مصرف شده</span><b>${bytes(u.used)}</b></div><div class="li"><span class="muted">حجم کل</span><b>${u.total ? bytes(u.total) : "نامحدود"}</b></div><div class="li"><span class="muted">انقضا</span><b>${jd(u.expire)}</b></div><div class="li"><span class="muted">وضعیت در پنل</span><b>${esc(u.status || "-")}</b></div></div></div>`;
+  animDonuts($("um"));
+ } catch (e) { if ($("um")) $("um").innerHTML = `<div class="hint">${esc(e.message)}</div>`; }
+}
+function extendM(id) { modal("تمدید دستی سرویس", `<div class="row">${F("افزایش روز", `<input id="m_d" class="ltr" value="30">`)}${F("حجم جدید (گیگ، ۰ = نامحدود)", `<input id="m_g" class="ltr" value="">`)}</div><div class="hint">حجم مصرفی سرویس صفر می‌شود و تاریخ انقضا از تاریخ فعلی سرویس افزایش پیدا می‌کند.</div>`, "تمدید", async () => {
+ const body = {days: nval("m_d")}; if (val("m_g") !== "") body.gb = nval("m_g"); await api(`/services/${id}/extend`, {body}); toast("سرویس تمدید شد"); loadSvc(); }); }
+
+/* ---------- tickets ---------- */
+let tsel = null, tfl = "open";
+P.tickets = {
+ load: () => api("/tickets?status=" + tfl),
+ render: list => {
+  if (!tsel || !list.find(t => t.id === tsel)) tsel = list[0] ? list[0].id : null;
+  const tl = {open: ["باز", "w"], answered: ["پاسخ داده شده", "b"], closed: ["بسته", "n"]};
+  return `<div class="toolbar"><div class="tabs">${[["open", "باز"], ["answered", "پاسخ داده شده"], ["closed", "بسته"], ["", "همه"]].map(([k, l]) => `<a class="${tfl === k ? "on" : ""}" onclick="tfl='${k}';tsel=null;reload()">${l}</a>`).join("")}</div></div>
+  <div class="grid g12"><div class="card" style="max-height:72vh;overflow-y:auto"><h3>تیکت‌ها</h3>${list.length ? list.map(t => `<div class="tk ${t.id === tsel ? "on" : ""}" onclick="tsel=${t.id};openTicket()"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:13px">${esc(t.subject)}</b><span class="tag ${tl[t.status][1]}">${tl[t.status][0]}</span></div><div class="muted">${esc(t.first_name || "")} ${t.username ? "| @" + esc(t.username) : ""} | ${ago(t.updated)}</div></div>`).join("") : empty("تیکتی وجود ندارد", "tickets")}</div>
+  <div class="card" id="tview">${empty("یک تیکت را انتخاب کنید", "tickets")}</div></div>`;
+ },
+ after: () => { if (tsel) openTicket(); }
+};
+let ticketReq = 0;
+async function openTicket() {
+ const id = tsel, req = ++ticketReq; // a slow answer for an older ticket can never replace the one now open
+ qsa(".tk").forEach(e => e.classList.toggle("on", e.getAttribute("onclick").includes("=" + id + ";")));
+ const t = await api("/tickets/" + id).catch(e => { toast(e.message, 1); });
+ if (!t || req !== ticketReq || !$("tview")) return;
+ $("tview").innerHTML = `<h3><span>${esc(t.subject)} <small>| تیکت ${fa(t.id)}</small></span><span>${ucell(t)}</span></h3>
+  <div class="chat" id="chat">${t.msgs.map((m, i) => `<div class="bub ${m.sender}" style="animation-delay:${i * 40}ms">${esc(m.text)}<small>${m.sender === "a" ? "پشتیبانی | " : ""}${jdt(m.created)}</small></div>`).join("")}</div>
+  <textarea id="trp" rows="3" placeholder="پاسخ خود را بنویسید..." style="margin-top:14px"></textarea>
+  <div class="row mt"><button class="btn f0" id="trb">${ic("bc")}ارسال پاسخ</button><button class="btn o f0" id="tcb">${t.status === "closed" ? "باز کردن تیکت" : "بستن تیکت"}</button></div>`;
+ const c = $("chat"); c.scrollTop = c.scrollHeight;
+ $("trb").onclick = () => act($("trb"), async () => { if (!val("trp")) throw new Error("متن پاسخ خالی است"); const r = await api(`/tickets/${id}/reply`, {body: {text: $("trp").value}}); if (tsel === id) openTicket(); return r; }, r => r.delivered ? "پاسخ برای کاربر ارسال شد" : "پاسخ ثبت شد ولی ارسال به کاربر ناموفق بود");
+ $("tcb").onclick = () => act($("tcb"), async () => { await api(`/tickets/${id}/status`, {body: {status: t.status === "closed" ? "open" : "closed"}}); reload(); });
+}
+
+/* ---------- plans ---------- */
+let SERVERS = [];
+P.plans = {
+ load: async () => { const [p, s] = await Promise.all([api("/plans"), api("/servers")]); SERVERS = s; return p; },
+ render: plans => `<div class="toolbar"><button class="btn" onclick="planM()">${ic("plus")}پلن جدید</button><span class="muted">پلن‌ها بر اساس دسته‌بندی در ربات نمایش داده می‌شوند.</span></div>
+  <div class="card"><div class="tw">${plans.length ? `<table><thead><tr><th>نام پلن</th><th>دسته</th><th>حجم</th><th>مدت</th><th>کاربر</th><th>قیمت</th><th>سرور</th><th>فعال</th><th></th></tr></thead><tbody>${plans.map((p, i) => `<tr style="animation-delay:${i * 30}ms">
+   <td><b>${esc(p.name)}</b></td><td>${p.category ? `<span class="tag b">${esc(p.category)}</span>` : '<span class="muted">-</span>'}</td><td>${gbt(p.volume_gb)}</td><td>${fa(p.days)} روز</td><td>${fa(p.users_limit)}</td><td><b>${p.price ? money(p.price) : '<span class="tag ok">رایگان</span>'}</b></td>
+   <td class="muted">${p.server_id ? esc((SERVERS.find(s => s.id === p.server_id) || {}).name || "حذف شده") : "خودکار"}</td>
+   <td>${sw(p.active, `onchange="api('/plans/${p.id}',{method:'PUT',body:{active:this.checked}}).then(()=>toast('ذخیره شد'),e=>{this.checked=!this.checked;toast(e.message,1)})"`)}</td>
+   <td><button class="btn o sm" onclick='planM(${esc(JSON.stringify(p))})'>${ic("edit")}</button> <button class="btn bad sm" onclick="confirmM('این پلن حذف شود؟',async()=>{await api('/plans/${p.id}',{method:'DELETE'});toast('حذف شد');reload()},'حذف')">${ic("trash")}</button></td></tr>`).join("")}</tbody></table>` : empty("هنوز پلنی تعریف نشده. اولین پلن را بسازید.", "plans")}</div></div>`
+};
+function planM(p) {
+ p = p || {name: "", category: "", volume_gb: 50, days: 30, users_limit: 1, price: "", server_id: null, sort: 0, active: 1};
+ modal(p.id ? "ویرایش پلن" : "پلن جدید", `${F("نام پلن", `<input id="f_n" value="${esc(p.name)}" placeholder="مثلاً یک ماهه ۵۰ گیگ">`)}
+  <div class="row">${F("دسته‌بندی", `<input id="f_c" value="${esc(p.category)}" placeholder="یک ماهه">`)}${F("ترتیب نمایش", `<input id="f_o" class="ltr" value="${p.sort || 0}">`)}</div>
+  <div class="row">${F("حجم (گیگ، ۰ = نامحدود)", `<input id="f_v" class="ltr" value="${p.volume_gb}">`)}${F("مدت (روز)", `<input id="f_d" class="ltr" value="${p.days}">`)}${F("تعداد کاربر", `<input id="f_u" class="ltr" value="${p.users_limit}">`)}</div>
+  ${F("قیمت (تومان)", `<input id="f_p" class="ltr" inputmode="numeric" value="${p.price}">`)}
+  ${F("سرور", `<select id="f_s"><option value="">انتخاب خودکار کم‌بارترین سرور</option>${SERVERS.map(s => `<option value="${s.id}" ${s.id === p.server_id ? "selected" : ""}>${esc(s.name)} (${esc(s.type)})</option>`).join("")}</select>`)}`, "ذخیره", async () => {
+  const body = {name: val("f_n"), category: val("f_c"), sort: nval("f_o"), volume_gb: nval("f_v"), days: nval("f_d"), users_limit: nval("f_u") || 1, price: nval("f_p"), server_id: val("f_s"), active: p.active ? 1 : 0};
+  if (!body.name) throw new Error("نام پلن را وارد کنید");
+  await api(p.id ? "/plans/" + p.id : "/plans", {method: p.id ? "PUT" : "POST", body}); toast(p.id ? "پلن ویرایش شد" : "پلن ساخته شد"); reload();
+ });
+}
+
+/* ---------- servers ---------- */
+const STYPES = {auto: "تشخیص خودکار (پیشنهادی)", marzban: "Marzban", pasarguard: "PasarGuard", remnawave: "Remnawave", marzneshin: "Marzneshin", xui: "3x-ui (Sanaei)", xui_alireza: "X-UI (Alireza)", hiddify: "Hiddify Manager", custom: "API سفارشی (هر پنل دیگر)", stock: "کانفیگ دستی (انبار کانفیگ)"};
+const SHINT = {
+ auto: "فقط آدرس پنل، نام کاربری و رمز را وارد کنید؛ ربات خودش نوع پنل را تشخیص می‌دهد (Marzban، PasarGuard، Marzneshin، 3x-ui، X-UI، Hiddify، Remnawave). برای Remnawave و Hiddify به جای رمز، توکن API را وارد کنید. پنل‌های روی Railway هم با لینک دامنه‌شان وصل می‌شوند.",
+ pasarguard: "آدرس پنل PasarGuard و نام کاربری و رمز ادمین (اکانت نمایندگی هم پشتیبانی می‌شود). گروه‌ها خودکار انتخاب می‌شوند.",
+ remnawave: "آدرس پنل Remnawave و توکن API (از بخش API Tokens پنل بسازید).",
+ marzban: "آدرس پنل را بدون /dashboard وارد کنید. مثال: https://panel.domain.com:8000 | اکانت ادمین نمایندگی (غیر sudo) هم پشتیبانی می‌شود. پنل‌هایی که روی Railway هستند هم با همان لینک دامنه وصل می‌شوند.",
+ marzneshin: "آدرس پنل Marzneshin و نام کاربری و رمز ادمین را وارد کنید. شناسه سرویس‌ها اختیاری است.",
+ xui: "آدرس پنل را همراه با مسیر وب (اگر دارد) وارد کنید. مثال: https://domain.com:2053/secretpath",
+ xui_alireza: "آدرس پنل X-UI علیرضا همراه با مسیر وب (اگر دارد).",
+ hiddify: "لینک ادمین Hiddify (شامل مسیر ادمین) و API Key را وارد کنید. لینک کلاینت برای ساخت لینک ساب استفاده می‌شود.",
+ custom: "برای هر پنلی که در لیست نیست: ربات به این آدرس درخواست POST با action می‌فرستد (create / renew / usage / delete / ping) و رمز را به عنوان Bearer ارسال می‌کند.",
+ stock: "کانفیگ‌ها را از هر پنلی بسازید و در انبار قرار دهید؛ ربات بعد از هر خرید یکی را تحویل می‌دهد."
+};
+P.servers = {
+ load: () => api("/servers"),
+ render: list => `<div class="toolbar"><button class="btn" onclick="serverM()">${ic("plus")}اتصال پنل جدید</button><span class="muted">فقط لینک و اطلاعات ورود را بدهید؛ نوع پنل خودکار تشخیص داده می‌شود</span></div>
+  ${list.length && list[0].queued ? `<div class="hint" style="margin:0 0 14px">${fa(list[0].queued)} سفارش در صف تحویل خودکار است؛ به محض در دسترس شدن پنل، سرویس برای کاربر ارسال می‌شود.</div>` : ""}
+  ${list.length ? `<div class="grid g3">${list.map((s, i) => `<div class="card srv"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+   <div><b style="font-size:15px">${esc(s.name)}</b><div class="type">${esc(STYPES[s.type] || s.type)}${s.type !== "stock" && s.health ? ` | <span style="color:${s.health.ok ? "#16a34a" : "#e11d48"}">${s.health.ok ? "آنلاین" + (s.health.ms ? " | " + fa(s.health.ms) + " میلی‌ثانیه" : "") : "قطع"}</span>` : ""}</div>${s.health && !s.health.ok && s.health.err ? `<div class="muted" style="font-size:11px;margin-top:3px;max-width:240px">${esc(s.health.err)}</div>` : ""}<div class="muted mono" style="margin-top:4px;max-width:220px;overflow:hidden;text-overflow:ellipsis">${esc(s.url || "")}</div></div>
+   ${ring(s.capacity ? s.used / s.capacity : 0, COLORS[i % 7])}</div>
+   <div class="li" style="margin-top:10px"><span class="muted">سرویس فعال</span><b>${fa(s.used)}${s.capacity ? " از " + fa(s.capacity) : ""}</b></div>
+   ${s.type === "stock" ? `<div class="li"><span class="muted">کانفیگ آماده در انبار</span><b>${fa(s.stock_free)}</b></div>` : ""}
+   <div class="li"><span class="muted">فعال</span>${sw(s.active, `onchange="api('/servers/${s.id}',{method:'PUT',body:{active:this.checked}}).then(()=>toast('ذخیره شد'),e=>{this.checked=!this.checked;toast(e.message,1)})"`)}</div>
+   <div class="row" style="gap:6px;margin-top:8px">${s.type === "stock" ? `<button class="btn sm f0" onclick="stockM(${s.id})">مدیریت انبار</button>` : `<button class="btn sm f0" onclick="act(this,()=>api('/servers/${s.id}/test',{body:{}}),r=>r.msg)">${ic("bolt")}تست اتصال</button>`}
+   <button class="btn o sm f0" onclick='serverM(${esc(JSON.stringify(s))})'>${ic("edit")}ویرایش</button><button class="btn bad sm f0" onclick="confirmM('این سرور حذف شود؟ سرویس‌های قبلی در پنل باقی می‌مانند.',async()=>{await api('/servers/${s.id}',{method:'DELETE'});toast('حذف شد');reload()},'حذف')">${ic("trash")}</button></div></div>`).join("")}</div>`
+   : `<div class="card">${empty("هنوز پنلی متصل نشده. روی «اتصال پنل جدید» بزنید.", "servers")}</div>`}`
+};
+function sfields(t, s) {
+ const ex = s.extra || {};
+ const I = (id, label, v, ph = "", type = "text") => F(label, `<input id="${id}" class="ltr" type="${type}" value="${esc(v ?? "")}" placeholder="${ph}">`);
+ let h = "";
+ if (t !== "stock") h += I("s_url", t === "custom" ? "آدرس API" : t === "hiddify" ? "لینک ادمین" : "آدرس پنل", s.url, "https://");
+ if (["auto", "marzban", "pasarguard", "marzneshin", "xui", "xui_alireza"].includes(t)) h += `<div class="row">${I("s_u", "نام کاربری", s.username)}${I("s_p", "رمز عبور" + (s.id ? " (خالی = بدون تغییر)" : ""), "", "", "password")}</div>`;
+ if (t === "remnawave") h += I("x_api_key", "توکن API" + (s.id ? " (خالی = بدون تغییر)" : ""), "", "", "password");
+ if (t === "custom") h += I("s_p", "کلید API" + (s.id ? " (خالی = بدون تغییر)" : ""), "", "", "password");
+ if (t === "hiddify") h += I("x_api_key", "API Key" + (s.id ? " (خالی = بدون تغییر)" : ""), "", "", "password") + I("x_client_url", "لینک کلاینت (Client Proxy Path)", ex.client_url, "https://domain.com/clientpath");
+ if (t === "xui" || t === "xui_alireza") h += `<div class="row">${I("x_inbound_id", "شناسه اینباند (خالی = اولین)", ex.inbound_id)}${I("x_flow", "Flow (اختیاری)", ex.flow, "xtls-rprx-vision")}</div>${I("x_sub_url", "آدرس ساب (اختیاری)", ex.sub_url, "https://domain.com:2096/sub")}${I("x_host", "دامنه کانفیگ (اختیاری)", ex.host, "domain.com")}`;
+ if (t === "marzban") h += I("x_flow", "Flow برای VLESS (اختیاری)", ex.flow, "xtls-rprx-vision");
+ if (t === "marzneshin") h += I("x_service_ids", "شناسه سرویس‌ها با کاما (خالی = همه)", (ex.service_ids || []).join(","), "1,2");
+ if (t !== "stock") h += `<div class="li"><span>پذیرش گواهی SSL نامعتبر (Self-signed)</span>${sw(ex.insecure !== false, 'id="x_insecure"')}</div>`;
+ return h + `<div class="hint">${SHINT[t]}</div>`;
+}
+function serverM(s) {
+ if (!s || s.type === "auto") return smartM();
+ modal(s.id ? "ویرایش سرور" : "اتصال دستی پنل", `<div class="row">${F("نوع پنل", `<select id="s_t">${Object.entries(STYPES).filter(([k]) => k !== "auto").map(([k, l]) => `<option value="${k}" ${k === s.type ? "selected" : ""}>${l}</option>`).join("")}</select>`)}${F("نام نمایشی", `<input id="s_n" value="${esc(s.name)}" placeholder="مثلاً آلمان ۱">`)}</div>
+  ${F("ظرفیت سرویس (۰ = نامحدود)", `<input id="s_c" class="ltr" value="${s.capacity || 0}">`)}<div id="sf">${sfields(s.type, s)}</div>
+  <div class="row mt"><button class="btn o sm f0" id="s_test">${ic("bolt")}تست اتصال</button></div>`, "ذخیره", async () => {
+  const body = sbody(); if (!body.name) throw new Error("نام سرور را وارد کنید"); if (body.type !== "stock" && !body.url) throw new Error("آدرس پنل را وارد کنید");
+  await api(s.id ? "/servers/" + s.id : "/servers", {method: s.id ? "PUT" : "POST", body}); toast(s.id ? "سرور ویرایش شد" : "سرور متصل شد"); reload();
+ }, {wide: 1});
+ $("s_t").onchange = () => { $("sf").innerHTML = sfields(val("s_t"), s.type === val("s_t") ? s : {extra: {}}); };
+ $("s_test").onclick = () => act($("s_test"), () => (s.id && !val("s_p") && !val("x_api_key")) ? api(`/servers/${s.id}/test`, {body: {}}) : api("/servers/test", {body: sbody()}), r => r.msg);
+}
+function detBox(cls, html) { const b = $("s_det"); if (b) { b.className = "det " + cls; b.innerHTML = `<i class="dot"></i><span>${html}</span>`; } }
+function smartBody() {
+ return {type: "auto", url: val("s_url"), username: val("s_u"), password: $("s_p").value, name: val("s_n"), capacity: nval("s_c"), extra: {insecure: $("x_insecure").checked}, active: 1};
+}
+function smartM() {
+ const I = (id, label, ph = "", type = "text") => F(label, `<input id="${id}" class="ltr" type="${type}" placeholder="${ph}" autocomplete="off">`);
+ modal("اتصال پنل جدید", `${I("s_url", "لینک پنل", "https://panel.domain.com:8000")}
+  <div class="row">${I("s_u", "نام کاربری (برای توکن خالی بگذارید)", "admin")}${I("s_p", "رمز عبور یا توکن API", "", "password")}</div>
+  <div class="det wait" id="s_det"><i class="dot"></i><span>لینک و اطلاعات ورود را وارد کنید؛ نوع پنل، تنظیمات و لینک ساب خودکار پیدا می‌شود.</span></div>
+  <details class="adv"><summary>تنظیمات پیشرفته (اختیاری)</summary>
+   <div class="row">${F("نام نمایشی (خالی = خودکار)", `<input id="s_n" placeholder="مثلاً آلمان ۱">`)}${F("ظرفیت سرویس (۰ = نامحدود)", `<input id="s_c" class="ltr" value="0">`)}</div>
+   <div class="li"><span>پذیرش گواهی SSL نامعتبر (Self-signed)</span>${sw(true, 'id="x_insecure"')}</div>
+   <div class="row mt" style="gap:6px"><button class="btn o sm f0" id="s_manual">انتخاب دستی نوع پنل</button><button class="btn o sm f0" id="s_stock">انبار کانفیگ دستی</button></div>
+  </details>`, "تشخیص و اتصال", async () => {
+  if (!val("s_url")) { detBox("no", "لینک پنل را وارد کنید"); throw new Error("لینک پنل را وارد کنید"); }
+  if (!$("s_p").value) { detBox("no", "رمز عبور یا توکن را وارد کنید"); throw new Error("رمز عبور یا توکن را وارد کنید"); }
+  detBox("wait", "در حال شناسایی پنل و اتصال...");
+  let r;
+  try { r = await api("/servers", {body: smartBody()}); }
+  catch (e) { detBox("no", esc(e.message)); throw e; }
+  detBox("ok", `<b>${esc(r.label || "")}</b> | ${esc(r.name || "")}<br>${esc(r.msg || "اتصال موفق")}`);
+  toast("پنل شناسایی و متصل شد: " + (r.label || ""));
+  await new Promise(x => setTimeout(x, 1100)); reload();
+ }, {wide: 1});
+ $("s_manual").onclick = () => serverM({type: "marzban", name: "", capacity: 0, extra: {}});
+ $("s_stock").onclick = () => serverM({type: "stock", name: "", capacity: 0, extra: {}});
+ const gen = smartGen, same = sig => gen === smartGen && $("s_url") && sig === val("s_url") + val("s_u") + $("s_p").value;
+ const live = () => { clearTimeout(smartTimer); if (!val("s_url") || !$("s_p").value) return; smartTimer = setTimeout(async () => {
+  const sig = val("s_url") + val("s_u") + $("s_p").value; detBox("wait", "در حال شناسایی پنل...");
+  try { const r = await api("/servers/test", {body: smartBody()}); if (same(sig)) { detBox("ok", esc(r.msg)); if (!val("s_n") && r.name) $("s_n").placeholder = r.name; } }
+  catch (e) { if (same(sig)) detBox("no", esc(e.message)); }
+ }, 1200); };
+ ["s_url", "s_u", "s_p"].forEach(id => $(id).addEventListener("input", live));
+ $("s_url").addEventListener("paste", e => {
+  const t = ((e.clipboardData || window.clipboardData) && (e.clipboardData || window.clipboardData).getData("text")) || "";
+  const p = parsePaste(t); if (!p) return;
+  e.preventDefault(); $("s_url").value = p.url;
+  if (p.user && !val("s_u")) $("s_u").value = p.user;
+  if (p.pw && !$("s_p").value) $("s_p").value = p.pw;
+  detBox("wait", "اطلاعات از متن کپی‌شده خوانده شد"); live();
+ });
+ const pu = $("s_url").closest(".fld") || $("s_url").parentNode; const hint = document.createElement("div"); hint.className = "muted"; hint.style.fontSize = "12px"; hint.style.marginTop = "4px";
+ hint.textContent = "می‌توانید کل پیام تحویل پنل (لینک، یوزر و رمز) را یک‌جا اینجا Paste کنید"; pu.appendChild(hint);
+}
+function parsePaste(t) {
+ t = String(t || "").replace(/[\u200b\u200e\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g, "");
+ if (!/[\r\n]/.test(t.trim()) && !/^\S+\s+\S+/.test(t.trim())) return null;
+ const fa = x => x.replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+ let url = "", user = "", pw = ""; const loose = [];
+ t.split(/[\r\n]+/).forEach(ln => {
+  const m = ln.match(/^\s*(user(?:name)?|login|admin|نام\s*کاربری|یوزر(?:نیم)?|pass(?:word)?|pwd|رمز(?:\s*عبور)?|پسورد|token|api[\s_-]*key|توکن)\s*[:=：]\s*(.+?)\s*$/i);
+  if (m) { if (/pass|pwd|رمز|پسورد|token|api|توکن/i.test(m[1])) pw = pw || m[2]; else user = user || m[2]; return; }
+  ln.split(/\s+/).forEach(w => { w = w.replace(/^[,;]+|[,;]+$/g, ""); if (!w) return;
+   if (!url && (/^https?:\/\//i.test(w) || /^[\w.-]+\.[a-z]{2,}(:\S+)?(\/|$)/i.test(w) || /^\d{1,3}(\.\d{1,3}){3}/.test(fa(w)))) url = w; else loose.push(w); });
+ });
+ if (!url) return null;
+ if (!user && !pw && loose.length === 2) { user = loose[0]; pw = loose[1]; } else if (!pw && loose.length === 1) pw = loose[0];
+ return {url: url.replace(/^(https?:\/\/)?([^/?#]*)/i, (a, s, h) => (s || "") + fa(h)), user, pw};
+}
+function sbody() {
+ const t = val("s_t"), extra = {};
+ ["inbound_id", "flow", "sub_url", "host", "client_url", "api_key"].forEach(k => { if ($("x_" + k) && val("x_" + k)) extra[k] = val("x_" + k); });
+ if ($("x_service_ids") && val("x_service_ids")) extra.service_ids = val("x_service_ids").split(/[,\s]+/).filter(Boolean).map(Number);
+ if ($("x_insecure")) extra.insecure = $("x_insecure").checked;
+ return {type: t, name: val("s_n"), capacity: nval("s_c"), url: val("s_url"), username: val("s_u"), password: $("s_p") ? $("s_p").value : "", extra, active: 1};
+}
+async function stockM(id) {
+ const st = await api("/stock/" + id).catch(e => toast(e.message, 1)); if (!st) return;
+ modal("انبار کانفیگ", `<div class="grid g2" style="margin:8px 0"><div class="card" style="padding:14px"><small class="muted">آماده تحویل</small><b style="display:block;font-size:20px">${fa(st.free)}</b></div><div class="card" style="padding:14px"><small class="muted">تحویل شده</small><b style="display:block;font-size:20px">${fa(st.used)}</b></div></div>
+  ${F("افزودن کانفیگ (هر خط یک کانفیگ یا لینک ساب)", `<textarea id="m_cf" rows="7" class="ltr" placeholder="vless://...&#10;vmess://...&#10;https://sub..."></textarea>`)}
+  <div class="row mt"><button class="btn bad sm f0" onclick="confirmM('همه کانفیگ‌های تحویل‌نشده حذف شوند؟',async()=>{const r=await api('/stock/${id}',{method:'DELETE'});toast(fa(r.deleted)+' کانفیگ حذف شد');reload()},'حذف')">پاک کردن کانفیگ‌های آماده</button></div>`, "افزودن به انبار", async () => {
+  const r = await api("/stock/" + id, {body: {configs: $("m_cf").value}}); toast(fa(r.added) + " کانفیگ اضافه شد"); reload(); }, {wide: 1});
+}
+
+/* ---------- payments ---------- */
+P.pay = {
+ load: async () => { const [c, s] = await Promise.all([api("/cards"), api("/settings")]); SETTINGS = s; return c; },
+ render: cards => {
+  const pm = SETTINGS.pay_methods, tg = SETTINGS.toggles;
+  return `<div class="grid g21"><div class="card"><h3>کارت‌های بانکی <button class="btn sm" onclick="cardM()">${ic("plus")}افزودن کارت</button></h3>
+   ${cards.length ? `<div class="grid g2">${cards.map(c => `<div class="bank ${c.active ? "" : "off"}"><div style="display:flex;justify-content:space-between;align-items:center"><b>${esc(c.bank || "کارت بانکی")}</b>${sw(c.active, `onchange="api('/cards/${c.id}',{method:'PUT',body:{active:this.checked}}).then(()=>{toast('ذخیره شد');reload()},e=>{this.checked=!this.checked;toast(e.message,1)})"`)}</div>
+    <div class="chipx"></div><div class="n">${esc(c.number)}</div><div style="display:flex;justify-content:space-between;align-items:center"><span>${esc(c.owner || "-")}</span>
+    <span><button class="btn sm o" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)" onclick='cardM(${esc(JSON.stringify(c))})'>${ic("edit")}</button> <button class="btn sm o" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)" onclick="confirmM('این کارت حذف شود؟',async()=>{await api('/cards/${c.id}',{method:'DELETE'});toast('حذف شد');reload()},'حذف')">${ic("trash")}</button></span></div></div>`).join("")}</div>` : empty("هنوز کارتی ثبت نشده", "pay")}</div>
+   <div class="card"><h3>روش‌های پرداخت</h3>
+    <div class="li"><div class="t"><b>کارت به کارت</b><small>دریافت رسید و تأیید توسط ادمین</small></div>${sw(pm.card, `onchange="saveS({pay_methods:{card:this.checked}})"`)}</div>
+    <div class="li"><div class="t"><b>کیف پول</b><small>پرداخت فوری از موجودی کاربر</small></div>${sw(pm.wallet, `onchange="saveS({pay_methods:{wallet:this.checked}})"`)}</div>
+    <div class="li"><div class="t"><b>چرخش خودکار کارت‌ها</b><small>نمایش تصادفی کارت‌های فعال برای پخش واریزها</small></div>${sw(tg.card_rotate, `onchange="saveS({toggles:{card_rotate:this.checked}})"`)}</div>
+    <div class="row">${F("حداقل شارژ (تومان)", `<input id="p_min" class="ltr" value="${SETTINGS.min_charge}">`)}${F("حداکثر شارژ (تومان)", `<input id="p_max" class="ltr" value="${SETTINGS.max_charge}">`)}</div>
+    <button class="btn mt" onclick="act(this,()=>saveS({min_charge:nval('p_min'),max_charge:nval('p_max')},1),'ذخیره شد')">ذخیره</button></div></div>`;
+ }
+};
+async function saveS(obj, silent) {
+ const ev = window.event, el = ev && ev.target && ev.target.type === "checkbox" ? ev.target : null;
+ try { await api("/settings", {method: "PUT", body: obj}); if (!silent) toast("ذخیره شد"); }
+ catch (e) { if (el) el.checked = !el.checked; toast(e.message, 1); throw e; } // a failed save never leaves a switch in the wrong position
+}
+function cardM(c) {
+ c = c || {number: "", owner: "", bank: "", active: 1};
+ modal(c.id ? "ویرایش کارت" : "افزودن کارت بانکی", `${F("شماره کارت", `<input id="c_n" class="ltr" inputmode="numeric" value="${esc(c.number)}" placeholder="0000 0000 0000 0000">`)}<div class="row">${F("نام صاحب کارت", `<input id="c_o" value="${esc(c.owner)}">`)}${F("نام بانک", `<input id="c_b" value="${esc(c.bank)}">`)}</div>`, "ذخیره", async () => {
+  await api(c.id ? "/cards/" + c.id : "/cards", {method: c.id ? "PUT" : "POST", body: {number: val("c_n"), owner: val("c_o"), bank: val("c_b"), active: c.active ? 1 : 0}}); toast("کارت ذخیره شد"); reload(); });
+ $("c_n").addEventListener("input", e => { const v = e.target.value.replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/\D/g, "").slice(0, 26); e.target.value = v.length > 16 ? v : v.replace(/(\d{4})(?=\d)/g, "$1 "); });
+}
+
+/* ---------- discounts & referral ---------- */
+P.disc = {
+ load: async () => { const [d, s] = await Promise.all([api("/discounts"), api("/settings")]); SETTINGS = s; return d; },
+ render: list => {
+  const r = SETTINGS.ref, t = Date.now() / 1000;
+  return `<div class="grid g21"><div class="card"><h3>کدهای تخفیف</h3>
+   <div class="row">${F("کد", `<input id="d_c" class="ltr" placeholder="OFF30">`)}${F("درصد", `<input id="d_p" class="ltr" placeholder="20">`)}${F("تعداد (۰ = نامحدود)", `<input id="d_n" class="ltr" value="0">`)}${F("اعتبار (روز، ۰ = همیشه)", `<input id="d_e" class="ltr" value="0">`)}</div>
+   <div class="row mt"><button class="btn f0" onclick="addDisc(this)">${ic("plus")}ساخت کد</button><button class="btn o f0" onclick="$('d_c').value='JX'+Math.random().toString(36).slice(2,8).toUpperCase()">کد تصادفی</button></div>
+   <div class="tw mt">${list.length ? `<table><thead><tr><th>کد</th><th>تخفیف</th><th>استفاده</th><th>انقضا</th><th>فعال</th><th></th></tr></thead><tbody>${list.map(d => `<tr><td class="mono"><b>${esc(d.code)}</b></td><td><span class="tag b">${fa(d.percent)}٪</span></td>
+    <td style="min-width:140px">${d.max_uses ? `<div class="prog"><i style="width:${Math.min(100, d.used / d.max_uses * 100)}%"></i></div><small class="muted">${fa(d.used)} از ${fa(d.max_uses)}</small>` : fa(d.used) + " بار"}</td>
+    <td class="muted">${d.expire_at ? (d.expire_at < t ? '<span class="tag bad">منقضی</span>' : jd(d.expire_at)) : "همیشه"}</td>
+    <td>${sw(d.active, `onchange="api('/discounts/${encodeURIComponent(d.code)}',{method:'PUT',body:{active:this.checked}}).then(()=>toast('ذخیره شد'),e=>{this.checked=!this.checked;toast(e.message,1)})"`)}</td>
+    <td><button class="btn o sm" onclick="copyText('${esc(d.code)}')">${ic("copy")}</button> <button class="btn bad sm" onclick="confirmM('کد حذف شود؟',async()=>{await api('/discounts/${encodeURIComponent(d.code)}',{method:'DELETE'});reload()},'حذف')">${ic("trash")}</button></td></tr>`).join("")}</tbody></table>` : empty("کدی ساخته نشده", "disc")}</div></div>
+   <div class="card"><h3>سیستم زیرمجموعه‌گیری</h3>
+    <div class="li"><div class="t"><b>فعال بودن سیستم معرف</b><small>هر کاربر لینک دعوت اختصاصی دارد</small></div>${sw(r.enabled, 'id="r_on"')}</div>
+    ${F("پورسانت معرف از هر خرید (درصد)", `<input id="r_p" class="ltr" value="${r.percent}">`)}${F("هدیه عضویت هر زیرمجموعه (تومان)", `<input id="r_g" class="ltr" value="${r.gift}">`)}
+    <button class="btn mt" onclick="act(this,()=>saveS({ref:{enabled:$('r_on').checked,percent:nval('r_p'),gift:nval('r_g')}},1),'تنظیمات معرف ذخیره شد')">ذخیره</button>
+    <div class="hint">پورسانت بعد از هر خرید یا تمدید موفق، خودکار به کیف پول معرف اضافه می‌شود.</div></div></div>`;
+ }
+};
+function addDisc(b) { act(b, async () => { const code = val("d_c").toUpperCase(); if (!code) throw new Error("کد را وارد کنید"); const p = nval("d_p"); if (p <= 0 || p > 100) throw new Error("درصد باید بین ۱ تا ۱۰۰ باشد"); const e = nval("d_e");
+ await api("/discounts", {body: {code, percent: p, max_uses: nval("d_n"), active: 1, expire_at: e ? Math.floor(Date.now() / 1000) + e * 86400 : 0}}); reload(); }, "کد تخفیف ساخته شد"); }
+
+/* ---------- resellers ---------- */
+P.resellers = {
+ load: async () => { const [u, s] = await Promise.all([api("/users?f=resellers"), api("/settings")]); SETTINGS = s; return u.items; },
+ render: list => `<div class="grid g21"><div class="card"><h3>نمایندگان فعال</h3><div class="tw">${list.length ? `<table><thead><tr><th>نماینده</th><th>آیدی</th><th>تخفیف</th><th>کیف پول</th><th>سرویس فعال</th><th></th></tr></thead><tbody>${list.map(u => `<tr>
+   <td>${ucell(u)}</td><td class="mono">${u.id}</td><td><span class="tag g">${fa(u.reseller_discount || SETTINGS.reseller_discount)}٪</span></td><td>${money(u.balance)}</td><td>${fa(u.services)}</td>
+   <td><button class="btn o sm" onclick="resM(${u.id},1,${u.reseller_discount || 0})">${ic("edit")}</button> <button class="btn o sm" onclick="walletM(${u.id})">${ic("wallet")}</button></td></tr>`).join("")}</tbody></table>` : empty("نماینده‌ای ثبت نشده", "resellers")}</div></div>
+  <div class="card"><h3>افزودن نماینده</h3>${F("آیدی عددی کاربر", `<input id="rs_i" class="ltr" inputmode="numeric">`)}${F("درصد تخفیف همکاری", `<input id="rs_d" class="ltr" value="${SETTINGS.reseller_discount}">`)}
+   <button class="btn mt" onclick="act(this,async()=>{await api('/resellers',{body:{id:nval('rs_i'),discount:nval('rs_d')}});reload()},'نماینده اضافه شد')">${ic("plus")}افزودن</button>
+   <div class="hint">کاربر باید قبلاً ربات را استارت کرده باشد. نمایندگان همه پلن‌ها را با تخفیف همکاری می‌بینند.</div>
+   <div class="li mt"><div class="t"><b>فروش نمایندگی</b><small>فعال یا غیرفعال کردن قیمت همکار</small></div>${sw(SETTINGS.toggles.reseller, `onchange="saveS({toggles:{reseller:this.checked}})"`)}</div>
+   ${F("تخفیف پیش‌فرض نمایندگان (درصد)", `<div class="row"><input id="rs_def" class="ltr" value="${SETTINGS.reseller_discount}"><button class="btn o f0" onclick="act(this,()=>saveS({reseller_discount:nval('rs_def')},1),'ذخیره شد')">ذخیره</button></div>`)}</div></div>`
+};
+/* ---------- button designer ---------- */
+let BTN = [], pvAdmin = false, dragI = null;
+const BCOL = [["", "#2b5278", "پیش‌فرض"], ["primary", "#3390ec", "آبی"], ["success", "#2fa94e", "سبز"], ["danger", "#e5484d", "قرمز"]];
+const SYSN = {buy: "خرید سرویس", services: "سرویس‌های من", renew: "تمدید سرویس", wallet: "کیف پول", test: "اکانت تست", ref: "زیرمجموعه‌گیری", help: "آموزش اتصال", support: "پشتیبانی"};
+P.buttons = {
+ load: async () => { SETTINGS = await api("/settings"); BTN = JSON.parse(JSON.stringify(SETTINGS.buttons)); return null; },
+ render: () => `<div class="grid g21"><div class="card"><h3>دکمه‌های منوی اصلی <small>بکشید و رها کنید تا ترتیب عوض شود</small></h3><div id="bl"></div>
+  <h3 style="margin-top:22px">افزودن دکمه سفارشی</h3><div class="row">${F("متن دکمه", `<input id="b_t" placeholder="کانال ما">`)}${F("نوع", `<select id="b_k"><option value="link">باز کردن لینک</option><option value="text">نمایش متن</option></select>`)}${F("لینک یا متن", `<input id="b_v" placeholder="https://t.me/...">`)}<div class="f0"><button class="btn" onclick="addBtn()">${ic("plus")}</button></div></div>
+  <div class="row" style="margin-top:20px"><button class="btn ok f0" onclick="act(this,()=>saveS({buttons:BTN},1),'دکمه‌ها در ربات اعمال شد')">${ic("check")}اعمال در ربات</button><button class="btn o f0" onclick="confirmM('دکمه‌ها به حالت پیش‌فرض برگردند؟',async()=>{BTN=JSON.parse(JSON.stringify(DEFBTN));rb()},'بازگردانی',false)">پیش‌فرض</button></div></div>
+  <div class="card"><h3>پیش‌نمایش زنده <div class="tabs"><a id="pvu" onclick="pvAdmin=false;rp()">کاربر</a><a id="pva" onclick="pvAdmin=true;rp()">ادمین</a></div></h3><div id="bp"></div>
+  <p class="muted" style="text-align:center;margin-top:12px">دکمه «پنل مدیریت» فقط برای ادمین‌ها نمایش داده می‌شود و همین پنل را داخل تلگرام باز می‌کند.</p></div></div>`,
+ after: () => rb()
+};
+const DEFBTN = [{id:"buy",text:"خرید سرویس",style:"success",wide:true,enabled:true,type:"sys"},{id:"services",text:"سرویس‌های من",style:"primary",wide:false,enabled:true,type:"sys"},{id:"renew",text:"تمدید سرویس",style:"primary",wide:false,enabled:true,type:"sys"},{id:"wallet",text:"کیف پول",style:"",wide:false,enabled:true,type:"sys"},{id:"test",text:"اکانت تست",style:"",wide:false,enabled:true,type:"sys"},{id:"ref",text:"زیرمجموعه‌گیری",style:"",wide:false,enabled:true,type:"sys"},{id:"help",text:"آموزش اتصال",style:"",wide:false,enabled:true,type:"sys"},{id:"support",text:"پشتیبانی",style:"danger",wide:true,enabled:true,type:"sys"}];
+function rb() {
+ $("bl").innerHTML = BTN.map((b, i) => `<div class="be" draggable="true" data-i="${i}" style="opacity:${b.enabled ? 1 : .55}"><span class="hd">${ic("grip")}</span>
+  <input type="text" value="${esc(b.text)}" oninput="BTN[${i}].text=this.value;rp()" title="${b.type === "sys" ? esc(SYSN[b.id] || "") : b.type === "link" ? "لینک" : "متن"}">
+  <div class="colors">${BCOL.map(([k, c, l]) => `<i title="${l}" style="background:${c}" class="${(b.style || "") === k ? "on" : ""}" onclick="BTN[${i}].style='${k}';rb()"></i>`).join("")}</div>
+  <button class="wbtn ${b.wide ? "on" : ""}" onclick="BTN[${i}].wide=!BTN[${i}].wide;rb()">${b.wide ? "تمام عرض" : "نیم عرض"}</button>
+  ${sw(b.enabled, `onchange="BTN[${i}].enabled=this.checked;rb()"`)}${b.type !== "sys" ? `<button class="btn ghost" onclick="BTN.splice(${i},1);rb()">${ic("trash")}</button>` : ""}</div>`).join("");
+ qsa(".be", $("bl")).forEach(el => {
+  el.addEventListener("dragstart", () => { dragI = +el.dataset.i; el.classList.add("drag"); });
+  el.addEventListener("dragend", () => el.classList.remove("drag"));
+  el.addEventListener("dragover", e => { e.preventDefault(); el.classList.add("over"); });
+  el.addEventListener("dragleave", () => el.classList.remove("over"));
+  el.addEventListener("drop", e => { e.preventDefault(); const to = +el.dataset.i; if (dragI !== null && dragI !== to) { const [m] = BTN.splice(dragI, 1); BTN.splice(to, 0, m); } dragI = null; rb(); });
+ });
+ rp();
+}
+function rp() { if (!$("bp")) return; $("pvu").classList.toggle("on", !pvAdmin); $("pva").classList.toggle("on", pvAdmin); $("bp").innerHTML = phone(fillVars(SETTINGS.texts.welcome), BTN, pvAdmin); }
+function addBtn() { const t = val("b_t"), k = val("b_k"), v = val("b_v"); if (!t) return toast("متن دکمه را وارد کنید", 1); if (k === "link" && !/^(https?:\/\/|tg:\/\/)/.test(v)) return toast("لینک معتبر نیست", 1);
+ BTN.push({id: "c" + Date.now().toString(36), text: t, style: "", wide: false, enabled: true, type: k, value: v}); $("b_t").value = $("b_v").value = ""; rb(); toast("دکمه اضافه شد؛ برای اعمال، «اعمال در ربات» را بزنید"); }
+
+/* ---------- texts ---------- */
+const TXS = [["welcome","پیام خوش‌آمدگویی","{name}",1],["buy","صفحه خرید",""],["pay_card","پرداخت کارت به کارت","{amount} {card} {owner} {bank}"],["receipt_ok","دریافت رسید","{id}"],["delivered","تحویل سرویس","{plan} {volume} {expire} {link}"],["renewed","تمدید موفق","{plan} {volume} {expire}"],
+ ["rejected","رد رسید","{id}"],["charged","شارژ کیف پول","{amount} {balance}"],["wallet","کیف پول","{balance}"],["charge_ask","درخواست مبلغ شارژ","{min}"],["ref","زیرمجموعه‌گیری","{percent} {count} {earned} {link}"],["help","آموزش اتصال",""],
+ ["support","پشتیبانی",""],["ticket_ask","درخواست متن تیکت",""],["ticket_ok","ثبت تیکت","{id}"],["test_used","اکانت تست تکراری",""],["no_service","بدون سرویس",""],["expire_alert","هشدار انقضا","{plan}"],["vol_alert","هشدار حجم","{plan} {percent}"],
+ ["rules","قوانین خرید",""],["join","عضویت اجباری",""],["phone","درخواست شماره",""],["banned","کاربر مسدود",""],["maintenance","حالت تعمیرات",""]];
+let txk = "welcome", TXV = {};
+P.texts = {
+ load: async () => { SETTINGS = await api("/settings"); TXV = {...SETTINGS.texts}; return null; },
+ render: () => `<div class="toolbar"><div class="tabs" style="flex-wrap:nowrap">${TXS.map(([k, l]) => `<a data-tk="${k}" class="${k === txk ? "on" : ""}">${l}</a>`).join("")}</div></div>
+  <div class="grid g21"><div class="card"><h3 id="txt_t"></h3><textarea id="tx" rows="12"></textarea><div class="muted mt" id="txv"></div>
+  <div class="hint">قالب‌بندی مجاز: <span class="mono">&lt;b&gt;</span> پررنگ، <span class="mono">&lt;i&gt;</span> مورب، <span class="mono">&lt;code&gt;</span> قابل کپی، <span class="mono">&lt;blockquote&gt;</span> نقل‌قول.</div>
+  <div class="row mt"><button class="btn f0" onclick="act(this,()=>saveS({texts:TXV},1),'همه متن‌ها ذخیره شد')">${ic("check")}ذخیره متن‌ها</button><button class="btn o f0" onclick="resetTx()">بازگردانی این متن</button></div></div>
+  <div class="card"><h3>پیش‌نمایش در تلگرام</h3><div id="tp"></div></div></div>`,
+ after: () => { qsa("[data-tk]").forEach(a => a.onclick = () => { txk = a.dataset.tk; qsa("[data-tk]").forEach(x => x.classList.toggle("on", x === a)); showTx(); }); $("tx").addEventListener("input", () => { TXV[txk] = $("tx").value; prevTx(); }); showTx(); }
+};
+function showTx() { const t = TXS.find(x => x[0] === txk); $("txt_t").textContent = t[1]; $("tx").value = TXV[txk] || ""; $("txv").innerHTML = t[2] ? "متغیرها: " + t[2].split(" ").map(v => `<span class="tag b mono" style="cursor:pointer" onclick="insVar('${v}')">${v}</span>`).join(" ") : ""; prevTx(); }
+function prevTx() { $("tp").innerHTML = phone(fillVars(TXV[txk] || ""), txk === "welcome" ? SETTINGS.buttons : null); }
+function insVar(v) { const t = $("tx"), s = t.selectionStart; t.value = t.value.slice(0, s) + v + t.value.slice(t.selectionEnd); TXV[txk] = t.value; t.focus(); t.selectionStart = t.selectionEnd = s + v.length; prevTx(); }
+function resetTx() { confirmM("این متن به حالت پیش‌فرض برگردد؟ (بعد از ذخیره اعمال می‌شود)", async () => { delete TXV[txk]; await saveS({texts: {[txk]: ""}}, 1); const s = await api("/settings"); SETTINGS = s; TXV[txk] = s.texts[txk]; showTx(); }, "بازگردانی", false); }
+
+/* ---------- broadcast ---------- */
+P.bc = {
+ load: () => api("/broadcast"),
+ render: st => `<div class="grid g21"><div class="card"><h3>ارسال پیام همگانی</h3>
+  ${F("گیرندگان", `<select id="bc_t"><option value="all">همه کاربران</option><option value="active">کاربران دارای سرویس فعال</option><option value="nobuy">کاربران بدون خرید</option><option value="expired">کاربران با سرویس منقضی</option><option value="resellers">نمایندگان فروش</option><option value="admins">فقط ادمین‌ها (ارسال آزمایشی)</option></select>`)}
+  ${F("متن پیام", `<textarea id="bc_m" rows="7"><b>تخفیف ویژه</b>\nتمام پلن‌ها با ۲۰ درصد تخفیف تا پایان هفته</textarea>`)}
+  <div class="row">${F("متن دکمه زیر پیام (اختیاری)", `<input id="bc_bt" placeholder="خرید سرویس">`)}${F("لینک دکمه", `<input id="bc_bu" class="ltr" placeholder="https://t.me/...">`)}</div>
+  <div class="li mt"><span>پین کردن پیام برای کاربران</span>${sw(0, 'id="bc_pin"')}</div>
+  <button class="btn mt" id="bc_go">${ic("bc")}شروع ارسال</button><div id="bc_pr" class="mt"></div>
+  <div class="hint">ارسال با سرعت کنترل‌شده (حدود ۲۵ پیام در ثانیه) انجام می‌شود تا ربات توسط تلگرام محدود نشود.</div></div>
+  <div class="card"><h3>پیش‌نمایش</h3><div id="bc_p"></div></div></div>`,
+ after: st => {
+  const pv = () => { const t = $("bc_m").value, bt = val("bc_bt"); $("bc_p").innerHTML = phone(t || " ", bt ? [{text: bt, style: "primary", wide: true, enabled: true}] : null); };
+  $("bc_m").value = $("bc_m").value.replace(/\\n/g, "\n"); ["bc_m", "bc_bt"].forEach(i => $(i).addEventListener("input", pv)); pv();
+  const prog = s => { if (!s || !s.total && !s.running) { $("bc_pr").innerHTML = ""; return; } const p = s.total ? (s.sent + s.failed) / s.total : 0;
+   $("bc_pr").innerHTML = `<div class="kpi"><span>${s.running ? "در حال ارسال به" : "آخرین ارسال:"} ${esc(s.target)}</span><span>${sep(s.sent + s.failed)} از ${sep(s.total)}</span></div><div class="prog"><i style="width:${p * 100}%;animation:none;transition:width .6s"></i></div><div class="muted" style="margin-top:6px">موفق: ${sep(s.sent)} | ناموفق (کاربر ربات را بسته): ${sep(s.failed)}</div>`; };
+  prog(st);
+  const watch = () => { const t = setInterval(async () => { const s = await api("/broadcast").catch(() => null); if (!s || CUR !== "bc") return clearInterval(t); prog(s); if (!s.running) { clearInterval(t); toast("ارسال همگانی تمام شد"); } }, 1500); timers.push(t); };
+  if (st.running) watch();
+  $("bc_go").onclick = () => confirmM("پیام برای گروه انتخاب‌شده ارسال شود؟", async () => { const s = await api("/broadcast", {body: {target: val("bc_t"), text: $("bc_m").value, btn_text: val("bc_bt"), btn_url: val("bc_bu"), pin: $("bc_pin").checked}}); prog(s); watch(); toast("ارسال شروع شد"); }, "ارسال", false);
+ }
+};
+
+/* ---------- bot ---------- */
+P.bot = {
+ load: () => api("/bot"),
+ render: b => `<div class="grid g2"><div class="card"><h3>وضعیت ربات <span class="tag ${b.running ? "ok" : "bad"}">${b.running ? "آنلاین" : "خاموش"}</span></h3>
+  <div class="li"><span class="muted">ربات</span>${b.username ? `<a class="mono" target="_blank" href="https://t.me/${esc(b.username)}">@${esc(b.username)}</a>` : "-"}</div>
+  <div class="li"><span class="muted">نام</span><span>${esc(b.name || "-")}</span></div>
+  <div class="li"><span class="muted">زمان فعالیت</span><span>${b.running && b.started ? ago(b.started).replace(" پیش", "") : "-"}</span></div>
+  <div class="li"><span class="muted">درخواست‌های پردازش‌شده</span><b>${sep(b.updates)}</b></div>
+  ${b.error ? `<div class="hint" style="border-color:rgba(244,63,94,.3);background:rgba(244,63,94,.06)">آخرین خطا: <span class="mono">${esc(b.error)}</span></div>` : ""}
+  <div class="li mt"><div class="t"><b>روشن / خاموش</b><small>با خاموش کردن، ربات به هیچ پیامی پاسخ نمی‌دهد</small></div>${sw(b.running, 'id="bpow"')}</div>
+  <h3 style="margin-top:20px">اطلاعات اتصال</h3>
+  ${F("توکن فعلی ربات", `<div class="tkbox"><input id="ctk" class="ltr mono" type="password" readonly value="${esc(b.token || "")}"><button class="btn o sm f0" type="button" onclick="const i=$('ctk');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'نمایش':'پنهان'">نمایش</button><button class="btn o sm f0" type="button" onclick="copyText(val('ctk'))">کپی</button></div>`)}
+  ${F("آیدی عددی ادمین‌ها", `<div class="tkbox"><input class="ltr mono" readonly value="${esc((b.admins || []).map(a => a.id + (a.role === "owner" ? " (مالک)" : "")).join("، ") || "-")}"><a class="btn o sm f0" href="#admins">مدیریت</a></div>`)}
+  <h3 style="margin-top:20px">تغییر توکن ربات</h3>${F("توکن جدید", `<input id="btk" class="ltr" placeholder="${esc(b.token_hint || "")}...">`)}
+  <button class="btn mt" onclick="act(this,async()=>{const r=await api('/bot/token',{body:{token:val('btk')}});setStatus(r.status);reload()},'ربات با توکن جدید متصل شد')">ذخیره و اتصال مجدد</button></div>
+  <div class="card"><h3>لینک پنل مدیریت</h3><p class="muted">دکمه «پنل مدیریت» داخل ربات برای ادمین‌ها به این لینک وصل است و پنل را مستقیم داخل تلگرام باز می‌کند.</p>
+  ${F("لینک پنل (دامنه Railway)", `<input id="purl" class="ltr" value="${esc(b.panel_url || ORIGIN)}">`)}
+  <div class="row mt"><button class="btn f0" onclick="act(this,()=>saveS({panel_url:val('purl')},1),'لینک پنل در ربات به‌روز شد')">ذخیره لینک</button><button class="btn o f0" onclick="$('purl').value=ORIGIN">استفاده از آدرس فعلی</button></div>
+  <div class="hint">در Railway از بخش <b>Settings</b> و <b>Networking</b> گزینه <b>Generate Domain</b> را بزنید و پورت را <b>8080</b> قرار دهید. لینک باید با https شروع شود تا داخل تلگرام باز شود.</div>
+  <h3 style="margin-top:20px">تغییر رمز پنل</h3><div class="row">${F("رمز فعلی", `<input id="pw0" type="password" class="ltr">`)}${F("رمز جدید", `<input id="pw1" type="password" class="ltr">`)}</div>
+  <button class="btn o mt" onclick="act(this,()=>api('/password',{body:{old:$('pw0').value,new:$('pw1').value}}),'رمز تغییر کرد')">تغییر رمز</button></div></div>`,
+ after: () => { $("bpow").onchange = e => act(null, async () => { const r = await api("/bot/power", {body: {on: e.target.checked}}); setStatus(r.status); reload(); }, e.target.checked ? "ربات روشن شد" : "ربات خاموش شد"); }
+};
+
+/* ---------- admins ---------- */
+P.admins = {
+ load: () => api("/admins"),
+ render: list => `<div class="grid g21"><div class="card"><h3>ادمین‌ها</h3><div class="tw"><table><thead><tr><th>ادمین</th><th>آیدی عددی</th><th>دسترسی</th><th></th></tr></thead><tbody>${list.map(a => `<tr><td><div class="user-cell">${av(a.name, a.id)}<b>${esc(a.name)}</b></div></td><td class="mono">${a.id}</td><td><span class="tag ${ROLE[a.role][1]}">${ROLE[a.role][0]}</span></td>
+  <td>${a.role === "owner" ? '<span class="muted">مالک ربات</span>' : `<button class="btn bad sm" onclick="confirmM('دسترسی این ادمین حذف شود؟',async()=>{await api('/admins/${a.id}',{method:'DELETE'});toast('حذف شد');reload()},'حذف')">${ic("trash")}</button>`}</td></tr>`).join("")}</tbody></table></div></div>
+  <div class="card"><h3>افزودن ادمین</h3>${F("آیدی عددی تلگرام", `<input id="a_i" class="ltr" inputmode="numeric" placeholder="123456789">`)}${F("نام", `<input id="a_n">`)}
+  ${F("سطح دسترسی", `<select id="a_r"><option value="full">مدیر کل (همه بخش‌ها)</option><option value="pay">تأیید پرداخت (دریافت رسیدها)</option><option value="support">پشتیبانی (دریافت تیکت‌ها)</option></select>`)}
+  <button class="btn mt" onclick="act(this,async()=>{await api('/admins',{body:{id:val('a_i'),name:val('a_n'),role:val('a_r')}});reload()},'ادمین اضافه شد')">${ic("plus")}افزودن ادمین</button>
+  <div class="hint">آیدی عددی را از ربات <b>@userinfobot</b> بگیرید. ادمین‌ها داخل ربات دکمه پنل مدیریت را می‌بینند و رسیدها یا تیکت‌ها (بر اساس دسترسی) برایشان ارسال می‌شود.</div></div></div>`
+};
+
+/* ---------- settings ---------- */
+const TOGS = [["test","اکانت تست رایگان","هر کاربر یک بار می‌تواند اکانت تست بگیرد"],["expire_alert","هشدار خودکار انقضا","۲۴ ساعت قبل از اتمام سرویس به کاربر پیام داده می‌شود"],["vol_alert","هشدار خودکار حجم","وقتی ۸۰ و ۹۵ درصد حجم مصرف شد، به کاربر پیام و دکمه تمدید ارسال می‌شود"],["qr","ارسال کد QR","همراه لینک سرویس، کد QR هم ارسال می‌شود"],
+ ["rules","نمایش قوانین قبل از خرید","متن قوانین در صفحه پرداخت نمایش داده می‌شود"],["phone","تأیید شماره تلفن","کاربر قبل از استفاده باید شماره خود را تأیید کند"],["antispam","ضد اسپم","محدودسازی خودکار کاربران پرتکرار"],
+ ["backup","بکاپ خودکار روزانه","فایل دیتابیس هر روز برای مالک ربات ارسال می‌شود"],["maintenance","حالت تعمیرات","ربات برای کاربران عادی بسته می‌شود"]];
+P.settings = {
+ load: async () => { const [s, sv] = await Promise.all([api("/settings"), api("/servers")]); SETTINGS = s; SERVERS = sv; return s; },
+ render: s => `<div class="grid g2"><div class="card"><h3>قابلیت‌های ربات</h3>${TOGS.map(([k, l, d]) => `<div class="li"><div class="t"><b>${l}</b><small>${d}</small></div>${sw(s.toggles[k], `onchange="saveS({toggles:{${k}:this.checked}})"`)}</div>`).join("")}</div>
+  <div><div class="card"><h3>عضویت اجباری و پشتیبانی</h3><div class="li"><div class="t"><b>عضویت اجباری در کانال</b><small>ربات باید ادمین کانال باشد</small></div>${sw(s.toggles.force_join, `onchange="saveS({toggles:{force_join:this.checked}})"`)}</div>
+   <div class="row">${F("آیدی کانال", `<input id="st_c" class="ltr" value="${esc(s.channel)}" placeholder="@channel">`)}${F("آیدی پشتیبانی", `<input id="st_s" class="ltr" value="${esc(s.support)}" placeholder="@support">`)}</div>
+   <button class="btn mt" onclick="act(this,()=>saveS({channel:val('st_c'),support:val('st_s')},1),'ذخیره شد')">ذخیره</button></div>
+  <div class="card mt"><h3>اکانت تست</h3><div class="row">${F("حجم (گیگ)", `<input id="tc_v" class="ltr" value="${s.test_cfg.volume}">`)}${F("مدت (روز)", `<input id="tc_d" class="ltr" value="${s.test_cfg.days}">`)}</div>
+   ${F("سرور اکانت تست", `<select id="tc_s"><option value="">خودکار</option>${SERVERS.map(x => `<option value="${x.id}" ${x.id == s.test_cfg.server_id ? "selected" : ""}>${esc(x.name)}</option>`).join("")}</select>`)}
+   <button class="btn mt" onclick="act(this,()=>saveS({test_cfg:{volume:nval('tc_v'),days:nval('tc_d'),server_id:val('tc_s')?+val('tc_s'):null}},1),'ذخیره شد')">ذخیره</button></div>
+  <div class="card mt"><h3>پاک‌سازی خودکار</h3><p class="muted">سرویس‌هایی که مدتی از انقضایشان گذشته، خودکار از پنل‌ها حذف می‌شوند تا پنل شلوغ نشود.</p>
+   <div class="row">${F("حذف بعد از (روز، ۰ = خاموش)", `<input id="st_cl" class="ltr" inputmode="numeric" value="${s.cleanup_days || 0}">`)}<button class="btn f0" onclick="act(this,()=>saveS({cleanup_days:nval('st_cl')},1),'ذخیره شد')">ذخیره</button></div></div>
+  <div class="card mt"><h3>پشتیبان‌گیری و بازیابی</h3><p class="muted">نسخه کامل دیتابیس (کاربران، سرویس‌ها، سفارش‌ها و تنظیمات). برای انتقال به سرور جدید، بکاپ را در پنل جدید بازیابی کنید.</p>
+   <div class="row mt" style="gap:8px"><button class="btn o f0" onclick="dlBackup(this)">${ic("download")}دانلود بکاپ</button><button class="btn o f0" onclick="$('rsf').click()">بازیابی از فایل بکاپ</button></div>
+   <input type="file" id="rsf" accept=".db,application/octet-stream" hidden onchange="restoreM(this)"></div></div></div>`
+};
+function restoreM(inp) {
+ const f = inp.files && inp.files[0]; inp.value = ""; if (!f) return;
+ confirmM(`همه اطلاعات فعلی با فایل «${esc(f.name)}» جایگزین شود؟ این کار قابل برگشت نیست؛ اگر لازم است اول از وضعیت فعلی بکاپ بگیرید.`, async () => {
+  const r = await (window.DEMO_FETCH || window.fetch)("/api/restore", {method: "POST", headers: {"X-Auth": TOKEN, "Content-Type": "application/octet-stream"}, credentials: "include", body: f});
+  const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.error || "بازیابی ناموفق بود");
+  for (const k in VCACHE) delete VCACHE[k]; toast("اطلاعات با موفقیت بازیابی شد"); reload(); renderNav();
+ }, "بازیابی");
+}
+async function dlBackup(b) { await act(b, async () => { const r = await (window.DEMO_FETCH || window.fetch)("/api/backup", {headers: {"X-Auth": TOKEN}, credentials: "include"}); if (!r.ok) throw new Error("دانلود ناموفق بود"); const u = URL.createObjectURL(await r.blob()), a = document.createElement("a"); a.href = u; a.download = "backup.db"; a.click(); }, "بکاپ دانلود شد"); }
+
+/* ---------- logs ---------- */
+P.logs = {
+ load: () => api("/logs"),
+ render: l => `<div class="card"><h3>گزارش فعالیت <button class="btn o sm" onclick="reload()">${ic("refresh")}</button></h3>${l.length ? l.map((x, i) => `<div class="li" style="animation:rise .4s ${Math.min(i, 20) * 25}ms var(--ease) both"><span>${esc(x.text)}</span><span class="muted" style="white-space:nowrap">${jdt(x.created)}</span></div>`).join("") : empty("فعالیتی ثبت نشده", "logs")}</div>`
+};
+
+/* ============ command palette ============ */
+function cmdk() {
+ modal("جستجوی سریع", `<div class="cmd"><input id="ck" placeholder="نام بخش را بنویسید..."><div class="res mt" id="ckr"></div></div>`, null);
+ let sel = 0; const items = NAV.filter(n => n[0] !== "sec");
+ const r = () => { const q = val("ck"); const l = items.filter(n => !q || n[1].includes(q)); sel = Math.min(sel, Math.max(0, l.length - 1));
+  $("ckr").innerHTML = l.map((n, i) => `<a class="${i === sel ? "on" : ""}" data-k="${n[0]}">${ic(n[0])}${n[1]}<span class="muted" style="margin-right:auto;font-size:11px">${SUB[n[0]] || ""}</span></a>`).join("") || empty("موردی یافت نشد");
+  qsa("#ckr a").forEach(a => a.onclick = () => { closeM(); go(a.dataset.k); }); return l; };
+ r(); $("ck").addEventListener("input", () => { sel = 0; r(); });
+ $("ck").addEventListener("keydown", e => { const l = r(); if (e.key === "ArrowDown") { sel = Math.min(l.length - 1, sel + 1); r(); e.preventDefault(); } if (e.key === "ArrowUp") { sel = Math.max(0, sel - 1); r(); e.preventDefault(); } if (e.key === "Enter" && l[sel]) { closeM(); go(l[sel][0]); } });
+}
+document.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); cmdk(); } if (e.key === "Escape") { closeM(); $("lbox").classList.remove("on"); } });
+
+/* ============ setup wizard / login ============ */
+let ws = 0, W = {};
+function wiz() {
+ qsa("#wsteps div").forEach((d, i) => d.classList.toggle("on", i <= ws));
+ const b = $("wzb");
+ if (ws === 0) b.innerHTML = `<div class="wstep"><h2>اتصال ربات تلگرام</h2><p class="muted">توکن ربات را از BotFather بگیرید و اینجا وارد کنید.</p>
+  ${F("توکن ربات", `<input id="w_tk" class="ltr" placeholder="123456789:AAH..." value="${esc(W.token || "")}">`)}
+  <div class="hint">در تلگرام به <b>@BotFather</b> بروید، دستور <b>/newbot</b> را بزنید و توکنی که می‌دهد را اینجا قرار دهید.</div>
+  <div class="row" style="margin-top:22px"><button class="btn lg f0" id="w_n">ادامه</button></div></div>`;
+ if (ws === 1) b.innerHTML = `<div class="wstep"><h2>ادمین اصلی (مالک)</h2><p class="muted">آیدی عددی تلگرام خودتان را وارد کنید. دکمه پنل مدیریت و رسیدها برای این آیدی ارسال می‌شود.</p>
+  <div class="row">${F("آیدی عددی", `<input id="w_ad" class="ltr" inputmode="numeric" placeholder="123456789" value="${esc(W.admin_id || "")}">`)}${F("نام (اختیاری)", `<input id="w_an" value="${esc(W.admin_name || "")}">`)}</div>
+  <div class="hint">آیدی عددی را از ربات <b>@userinfobot</b> دریافت کنید. ادمین‌های بیشتر را بعداً از بخش ادمین‌ها اضافه کنید.</div>
+  <div class="row" style="margin-top:22px"><button class="btn lg f0" id="w_n">ادامه</button><button class="btn o lg f0" id="w_b">مرحله قبل</button></div></div>`;
+ if (ws === 2) b.innerHTML = `<div class="wstep"><h2>لینک پنل و رمز ورود</h2><p class="muted">لینک دامنه Railway؛ دکمه پنل مدیریت داخل ربات به این لینک وصل می‌شود.</p>
+  ${F("لینک پنل مدیریت", `<input id="w_url" class="ltr" value="${esc(W.panel_url || ORIGIN)}">`)}
+  <div class="row">${F("رمز ورود به پنل", `<input id="w_p1" type="password" class="ltr" autocomplete="new-password">`)}${F("تکرار رمز", `<input id="w_p2" type="password" class="ltr" autocomplete="new-password">`)}</div>
+  <div class="hint">پنل روی پورت <b>8080</b> اجرا می‌شود. در Railway از Settings و Networking گزینه Generate Domain را بزنید.</div>
+  <div class="row" style="margin-top:22px"><button class="btn gold lg f0" id="w_n">راه‌اندازی ربات</button><button class="btn o lg f0" id="w_b">مرحله قبل</button></div></div>`;
+ if ($("w_b")) $("w_b").onclick = () => { ws--; wiz(); };
+ $("w_n").onclick = async () => {
+  if (ws === 0) { const t = val("w_tk"); if (!/^\d{6,12}:[A-Za-z0-9_-]{30,}$/.test(t)) return toast("فرمت توکن صحیح نیست", 1); W.token = t; ws = 1; return wiz(); }
+  if (ws === 1) { const a = val("w_ad"); if (!/^\d{5,13}$/.test(a)) return toast("آیدی عددی معتبر نیست", 1); W.admin_id = a; W.admin_name = val("w_an"); ws = 2; return wiz(); }
+  const u = val("w_url"), p1 = $("w_p1").value, p2 = $("w_p2").value;
+  if (!/^https?:\/\//.test(u)) return toast("لینک پنل معتبر نیست", 1); if (p1.length < 6) return toast("رمز باید حداقل ۶ کاراکتر باشد", 1); if (p1 !== p2) return toast("رمزها یکسان نیستند", 1);
+  W.panel_url = u; W.password = p1;
+  const r = await act($("w_n"), () => api("/setup", {body: W, open: 1}));
+  if (r && r.ok) { toast("ربات @" + r.bot.username + " با موفقیت راه‌اندازی شد"); $("wiz").classList.remove("on"); startApp(); }
+ };
+ authMode(true); $("wiz").classList.add("on");
+}
+function authMode(on) {
+ document.body.classList.toggle("auth", on);
+ if (on) { for (const k in VCACHE) delete VCACHE[k]; $("sb").classList.remove("open"); $("sbo").classList.remove("on"); closeM(); timers.forEach(clearInterval); timers = []; $("view").innerHTML = ""; }
+}
+function showLogin(msg) {
+ const already = $("login").classList.contains("on");
+ authMode(true); $("wiz").classList.remove("on"); $("login").classList.add("on");
+ if (already) return;
+ $("lp").value = ""; $("lp").type = "password"; $("lerr").textContent = msg || "";
+ if (matchMedia("(pointer:fine)").matches) setTimeout(() => $("lp").focus(), 200);
+}
+let logging = false;
+async function doLogin() {
+ if (logging) return; const pw = $("lp").value, box = $("lform"), err = $("lerr");
+ if (!pw.trim()) { err.textContent = "رمز عبور را وارد کنید"; box.classList.remove("shake"); void box.offsetWidth; box.classList.add("shake"); return $("lp").focus(); }
+ logging = true; err.textContent = ""; const b = $("lbtn"), html = b.innerHTML; b.disabled = true; b.innerHTML = '<span class="spin"></span>';
+ try {
+  const r = await api("/login", {body: {password: pw}, open: 1});
+  if (r && r.ok) { $("lp").blur(); $("lp").value = ""; startApp(); }
+ } catch (e) {
+  err.textContent = e.message || "ورود ناموفق بود"; box.classList.remove("shake"); void box.offsetWidth; box.classList.add("shake"); $("lp").select();
+ } finally { logging = false; b.disabled = false; b.innerHTML = html; }
+}
+$("lform").addEventListener("submit", e => { e.preventDefault(); doLogin(); });
+$("leye").onclick = () => { const i = $("lp"); i.type = i.type === "password" ? "text" : "password"; i.focus(); };
+$("lp").addEventListener("input", () => { $("lerr").textContent = ""; });
+async function tgAuto() {
+ const h = new URLSearchParams(location.hash.slice(1)), init = h.get("tgWebAppData");
+ if (!init) return false;
+ try { await api("/tg-login", {body: {init}, open: 1}); safeHist(null, "", location.pathname + "#dash"); return true; } catch (e) { return false; }
+}
+
+/* ============ boot ============ */
+function startApp() {
+ authMode(false); $("login").classList.remove("on"); $("wiz").classList.remove("on");
+ renderNav(); const k = location.hash.slice(1); go(P[k] ? k : "dash", true);
+ if (!started) { started = true; setInterval(poll, 20000); }
+}
+$("mb").onclick = () => { $("sb").classList.toggle("open"); $("sbo").classList.toggle("on"); };
+$("sbo").onclick = () => { $("sb").classList.remove("open"); $("sbo").classList.remove("on"); };
+$("thb").onclick = theme; $("thb2").onclick = theme; $("cmdb").onclick = cmdk;
+$("lob").onclick = () => confirmM("از پنل خارج می‌شوید؟", async () => { await api("/logout", {body: {}, open: 1}).catch(() => {}); TOKEN = ""; STORE.removeItem("jx_t"); setTimeout(showLogin, 50); toast("از پنل خارج شدید"); }, "خروج", false);
+(async function boot() {
+ let s; try { s = await api("/state", {open: 1}); } catch (e) { toast("ارتباط با سرور برقرار نشد: " + (e && e.message || ""), 1); return; }
+ BRAND = s.brand_channel || BRAND_CHANNEL_DEFAULT; qsa(".brandlink").forEach(a => a.href = BRAND);
+ if (s.bot) BOT = {name: s.bot.name, username: s.bot.username};
+ if (!s.setup) return wiz();
+ if (s.authed || await tgAuto()) return startApp();
+ showLogin();
+})();
+</script>
+</body>
+</html>

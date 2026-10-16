@@ -1,0 +1,67 @@
+"""Default texts, buttons and settings for the bot."""
+
+DEFAULT_TEXTS = {
+    "welcome": "سلام <b>{name}</b> عزیز، خوش آمدید.\n\nسرویس‌های پرسرعت و پایدار با پشتیبانی شبانه‌روزی.\nاز منوی زیر بخش مورد نظر خود را انتخاب کنید.",
+    "banned": "دسترسی شما به ربات مسدود شده است.",
+    "maintenance": "ربات در حال به‌روزرسانی است. لطفاً کمی بعد دوباره تلاش کنید.",
+    "join": "برای استفاده از ربات، ابتدا در کانال ما عضو شوید و سپس دکمه «عضو شدم» را بزنید.",
+    "phone": "برای ادامه، لطفاً با دکمه زیر شماره تلفن خود را تأیید کنید.",
+    "buy": "<b>خرید سرویس</b>\n\nیکی از پلن‌های زیر را انتخاب کنید:",
+    "rules": "با خرید سرویس، قوانین استفاده از سرویس را می‌پذیرید.",
+    "pay_card": "<b>پرداخت کارت به کارت</b>\n\nمبلغ <b>{amount}</b> را به کارت زیر واریز کنید:\n\n<code>{card}</code>\nبه نام: <b>{owner}</b> {bank}\n\nسپس <b>تصویر رسید</b> را همین‌جا ارسال کنید.",
+    "receipt_ok": "رسید شما دریافت شد و پس از بررسی، نتیجه به شما اطلاع داده می‌شود.\nشماره سفارش: <b>{id}</b>",
+    "delivered": "<b>سرویس شما آماده است</b>\n\n<blockquote>پلن: {plan}\nحجم: {volume}\nتاریخ انقضا: {expire}</blockquote>\n\nلینک اتصال (برای کپی لمس کنید):\n<code>{link}</code>",
+    "renewed": "<b>سرویس شما با موفقیت تمدید شد</b>\n\n<blockquote>پلن: {plan}\nحجم: {volume}\nتاریخ انقضای جدید: {expire}</blockquote>",
+    "charged": "کیف پول شما به مبلغ <b>{amount}</b> شارژ شد.\nموجودی فعلی: <b>{balance}</b>",
+    "rejected": "رسید سفارش <b>{id}</b> تأیید نشد. در صورت نیاز با پشتیبانی در ارتباط باشید.",
+    "wallet": "<b>کیف پول</b>\n\nموجودی فعلی: <b>{balance}</b>\n\nبا شارژ کیف پول، خرید و تمدید سرویس‌ها فوری انجام می‌شود.",
+    "charge_ask": "مبلغ مورد نظر برای شارژ را به تومان ارسال کنید.\nحداقل مبلغ: <b>{min}</b>",
+    "ref": "<b>زیرمجموعه‌گیری</b>\n\nبا دعوت دوستانتان، از هر خرید آن‌ها <b>{percent} درصد</b> به کیف پول شما اضافه می‌شود.\n\nتعداد زیرمجموعه‌ها: <b>{count}</b>\nدرآمد شما تا امروز: <b>{earned}</b>\n\nلینک دعوت شما:\n<code>{link}</code>",
+    "help": "<b>آموزش اتصال</b>\n\nاندروید: v2rayNG یا Hiddify\nآیفون: Streisand یا V2Box\nویندوز: v2rayN یا Hiddify\n\nلینک سرویس را کپی کرده و در برنامه وارد کنید.",
+    "support": "<b>پشتیبانی</b>\n\nبرای ارتباط با پشتیبانی، تیکت ثبت کنید. پاسخ در همین ربات برای شما ارسال می‌شود.",
+    "ticket_ask": "پیام خود را بنویسید و ارسال کنید:",
+    "ticket_ok": "تیکت شما با شماره <b>{id}</b> ثبت شد. پاسخ پشتیبانی در همین ربات ارسال می‌شود.",
+    "vol_alert": "<b>هشدار حجم</b>\n\nاز حجم سرویس <b>{plan}</b> شما <b>{percent} درصد</b> مصرف شده است. برای قطع نشدن، همین حالا تمدید کنید.",
+    "test_used": "شما قبلاً از اکانت تست استفاده کرده‌اید.",
+    "no_service": "شما هنوز سرویس فعالی ندارید.",
+    "expire_alert": "<b>یادآوری تمدید</b>\n\nسرویس <b>{plan}</b> شما کمتر از ۲۴ ساعت دیگر منقضی می‌شود. برای جلوگیری از قطعی، همین حالا تمدید کنید.",
+}
+
+# style: "" (default) | "primary" | "success" | "danger"
+DEFAULT_BUTTONS = [
+    {"id": "buy", "text": "خرید سرویس", "style": "success", "wide": True, "enabled": True, "type": "sys"},
+    {"id": "services", "text": "سرویس‌های من", "style": "primary", "wide": False, "enabled": True, "type": "sys"},
+    {"id": "renew", "text": "تمدید سرویس", "style": "primary", "wide": False, "enabled": True, "type": "sys"},
+    {"id": "wallet", "text": "کیف پول", "style": "", "wide": False, "enabled": True, "type": "sys"},
+    {"id": "test", "text": "اکانت تست", "style": "", "wide": False, "enabled": True, "type": "sys"},
+    {"id": "ref", "text": "زیرمجموعه‌گیری", "style": "", "wide": False, "enabled": True, "type": "sys"},
+    {"id": "help", "text": "آموزش اتصال", "style": "", "wide": False, "enabled": True, "type": "sys"},
+    {"id": "support", "text": "پشتیبانی", "style": "danger", "wide": True, "enabled": True, "type": "sys"},
+]
+
+DEFAULTS = {
+    "admins": [],
+    "token": "",
+    "panel_url": "",
+    "password": "",
+    "bot_enabled": True,
+    "bot_info": {},
+    "channel": "",
+    "support": "",
+    "toggles": {
+        "force_join": False, "test": True, "expire_alert": True, "vol_alert": True, "reseller": True,
+        "phone": False, "rules": False, "antispam": True, "backup": True,
+        "maintenance": False, "card_rotate": True, "qr": True,
+    },
+    "pay_methods": {"card": True, "wallet": True},
+    "cleanup_days": 0,
+    "min_charge": 50000,
+    "max_charge": 50000000,
+    "test_cfg": {"volume": 1, "days": 1, "server_id": None},
+    "ref": {"enabled": True, "percent": 10, "gift": 0},
+    "reseller_discount": 20,
+    "buttons": DEFAULT_BUTTONS,
+    "texts": DEFAULT_TEXTS,
+    "sessions": {},
+    "last_backup": 0,
+}
